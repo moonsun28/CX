@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>홈즈 스튜디오 VOC 분석 리포트</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fb;
+    --surface2: #f0f1f5;
+    --border: #e2e4ec;
+    --text: #1a1a2e;
+    --text-muted: #6b6f8a;
+    --accent: #6c63ff;
+    --accent2: #ff6b6b;
+    --accent3: #ffd166;
+    --accent4: #06d6a0;
+    --accent5: #118ab2;
+    --선정릉: #6c63ff;
+    --아코모회기: #ff6b6b;
+    --남영: #d4a017;
+    --아코모가산: #06d6a0;
+    --안암: #ff9a3c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 24px;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* Nav Tabs */
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 20px 40px 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* Content */
+  .content {
+    padding: 32px 40px;
+    max-width: 1400px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Summary Cards */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .summary-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 3px; width: 100%;
+  }
+  .summary-card.선정릉::after { background: var(--선정릉); }
+  .summary-card.아코모회기::after { background: var(--아코모회기); }
+  .summary-card.남영::after { background: var(--남영); }
+  .summary-card.아코모가산::after { background: var(--아코모가산); }
+  .summary-card.안암::after { background: var(--안암); }
+  .summary-card.total::after { background: linear-gradient(90deg, var(--accent), var(--accent4)); }
+  .card-branch {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .card-num {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .card-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Section Title */
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px; height: 20px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Bar Chart */
+  .bar-chart { margin-bottom: 40px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .bar-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 130px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--surface2);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .bar-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  /* Branch VOC Detail */
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 900px) { .branch-grid { grid-template-columns: 1fr; } }
+
+  .branch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .branch-card-header {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .branch-name {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .branch-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .branch-total {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .branch-card-body { padding: 16px 20px; }
+
+  /* Category Badge Rows */
+  .cat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 6px;
+  }
+  .cat-row:last-child { border-bottom: none; }
+  .cat-row:hover { background: rgba(255,255,255,0.03); }
+  .cat-rank {
+    width: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .cat-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .cat-mini-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .cat-mini-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+  .cat-count {
+    font-size: 12px;
+    font-weight: 600;
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .cat-pct {
+    font-size: 11px;
+    color: var(--text-muted);
+    width: 38px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Sub-category expand */
+  .sub-panel {
+    display: none;
+    padding: 8px 0 8px 28px;
+    background: rgba(108,99,255,0.04);
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+  .sub-panel.open { display: block; }
+  .sub-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .sub-item-name { flex: 1; }
+  .sub-item-bar {
+    width: 60px;
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sub-item-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: rgba(108,99,255,0.6);
+  }
+  .sub-item-count {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    width: 24px;
+    text-align: right;
+  }
+
+  /* Donut placeholder */
+  .donut-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .donut-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    flex: 1;
+    min-width: 280px;
+  }
+  .donut-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .legend-list { list-style: none; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 12px;
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-name { flex: 1; }
+  .legend-pct { color: var(--text-muted); font-weight: 500; }
+  .legend-count { font-weight: 600; color: var(--text); }
+
+  /* Stacked visual */
+  .stacked-bar-container { margin-bottom: 40px; }
+  .stacked-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .stacked-row { display: flex; align-items: center; gap: 12px; }
+  .stacked-label {
+    width: 80px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .stacked-track {
+    flex: 1;
+    height: 32px;
+    background: var(--surface2);
+    border-radius: 6px;
+    display: flex;
+    overflow: hidden;
+  }
+  .stacked-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.7);
+    transition: flex 0.8s ease;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .stacked-total {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(108,99,255,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(108,99,255,0.3);
+    margin: 2px;
+  }
+
+  /* Insight box */
+  .insight-box {
+    background: rgba(108,99,255,0.08);
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+  }
+  .insight-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .insight-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .insight-text strong { color: var(--text); }
+  .insight-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .insight-item { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 200px; }
+  .insight-icon { font-size: 16px; margin-top: 1px; }
+
+  .expand-icon { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+  .cat-row.expanded .expand-icon { transform: rotate(90deg); }
+
+  svg.donut { overflow: visible; }
+
+  /* Keyword clickable row */
+  .kw-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 8px; border-radius: 6px;
+    cursor: pointer; transition: background 0.15s; margin-bottom: 2px;
+  }
+  .kw-row:hover { background: var(--surface2); }
+  .kw-row.kw-expanded { background: var(--surface2); }
+  .kw-name { flex: 1; font-size: 12px; color: var(--text); }
+  .kw-bar { width: 80px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+  .kw-bar-fill { height: 100%; border-radius: 2px; }
+  .kw-count { font-size: 11px; font-weight: 700; width: 28px; text-align: right; flex-shrink: 0; }
+  .kw-pct { font-size: 11px; color: var(--text-muted); width: 34px; text-align: right; flex-shrink: 0; }
+  .kw-arrow { font-size: 9px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+  .kw-row.kw-expanded .kw-arrow { transform: rotate(90deg); }
+  .voc-raw-panel {
+    display: none; padding: 6px 8px 10px 16px;
+    border-left: 2px solid var(--border);
+    margin: 0 8px 6px 20px;
+  }
+  .voc-raw-panel.open { display: block; }
+  .voc-raw-item {
+    display: flex; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .voc-raw-item:last-child { border-bottom: none; }
+  .voc-branch-badge {
+    font-size: 10px; font-weight: 600; padding: 2px 7px;
+    border-radius: 10px; flex-shrink: 0; margin-top: 1px; letter-spacing: 0.3px;
+  }
+  .voc-text { font-size: 12px; color: var(--text); line-height: 1.6; flex: 1; }
+  .branch-badge-선정릉 { background: rgba(108,99,255,0.12); color: #6c63ff; }
+  .branch-badge-아코모회기 { background: rgba(255,107,107,0.12); color: #ff6b6b; }
+  .branch-badge-남영 { background: rgba(212,160,23,0.12); color: #b8870a; }
+  .branch-badge-아코모가산 { background: rgba(6,214,160,0.12); color: #04a87b; }
+  .branch-badge-안암 { background: rgba(255,154,60,0.12); color: #e07800; }
+  .voc-show-more {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 6px; font-size: 11px; color: var(--accent);
+    cursor: pointer; font-weight: 500; background: none; border: none;
+  }
+  .voc-show-more:hover { text-decoration: underline; }
+
+  /* Priority tab */
+  .pri-branch-tab {
+    padding: 7px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+    background: #fff; font-size: 12px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; font-family: inherit;
+    color: var(--text); transition: all .15s;
+  }
+  .pri-branch-tab.active { font-weight: 700; }
+  .pri-pct-chip { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: var(--surface2); color: var(--text-muted); font-weight: 600; }
+  .pri-pct-chip.done { background: rgba(4,168,123,0.12); color: #04a87b; }
+  .pri-filter-btn {
+    padding: 4px 11px; border-radius: 20px; border: 1px solid var(--border);
+    background: #fff; font-size: 11px; color: var(--text-muted); cursor: pointer; font-family: inherit;
+  }
+  .pri-filter-btn.active { border-color: #6c63ff; background: #6c63ff; color: #fff; font-weight: 600; }
+  .pri-card {
+    background: #fff; border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; transition: border-color .2s; margin-bottom: 8px;
+  }
+  .pri-card.set { border-color: #d0ceff; }
+  .pri-card-header {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px; cursor: pointer;
+  }
+  .pri-card-header:hover { background: var(--surface); }
+  .pri-type-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 10px; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+  }
+  .pri-card-body { flex: 1; min-width: 0; }
+  .pri-problem { font-size: 12px; font-weight: 600; line-height: 1.4; }
+  .pri-updated { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+  .pri-card-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .pri-count-label { font-size: 10px; color: var(--text-muted); }
+  .pri-status-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 9px;
+    border-radius: 14px; border: 1px solid; white-space: nowrap;
+  }
+  .pri-expand {
+    border-top: 1px solid var(--surface2); padding: 12px 14px; background: var(--surface);
+  }
+  .pri-expand-label {
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;
+  }
+  .pri-detail-text { font-size: 11px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+  .pri-btns { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+  .pri-btn {
+    font-size: 11px; font-weight: 500; padding: 5px 12px;
+    border-radius: 8px; border: 1.5px solid var(--border); background: #fff;
+    color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all .1s;
+  }
+  .pri-btn:hover { background: var(--surface2); }
+  .pri-btn.active { font-weight: 700; }
+  .pri-memo {
+    width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+    font-size: 11px; resize: vertical; font-family: inherit; color: var(--text);
+    background: #fff; line-height: 1.6; box-sizing: border-box;
+  }
+  .pri-memo:focus { outline: none; border-color: #6c63ff; }
+  /* Dashboard */
+  .dash-stat-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 16px; }
+  .dash-stat { background: var(--surface); border-radius: 10px; padding: 14px; text-align: center; border: 1px solid var(--border); }
+  .dash-stat-num { font-size: 22px; font-weight: 700; line-height: 1; }
+  .dash-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+  .dash-section { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .dash-section-head {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .dash-bp-row { padding: 10px 16px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid var(--surface2); }
+  .dash-bp-row:last-child { border-bottom: none; }
+  .dash-bp-top { display: flex; align-items: center; gap: 8px; }
+  .dash-bp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dash-bp-name { font-size: 12px; font-weight: 600; width: 72px; }
+  .dash-track { flex: 1; height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; display: flex; }
+  .dash-seg { height: 100%; }
+  .dash-cnt { font-size: 11px; color: var(--text-muted); width: 44px; text-align: right; }
+  .dash-pct-label { font-size: 11px; font-weight: 700; width: 30px; text-align: right; }
+  .dash-badges { display: flex; gap: 3px; padding-left: 87px; flex-wrap: wrap; margin-top: 2px; }
+  .dash-table-row {
+    display: grid; grid-template-columns: 80px 90px minmax(0,1fr) 84px;
+    border-bottom: 1px solid var(--surface2); align-items: stretch;
+  }
+  .dash-table-row:last-child { border-bottom: none; }
+  .dash-cell {
+    padding: 9px 12px; border-right: 1px solid var(--surface2);
+    display: flex; align-items: center; font-size: 11px;
+  }
+  .dash-cell:last-child { border-right: none; }
+  .dash-cell.col-main { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .dash-br-pill { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+  .dash-empty { padding: 28px; text-align: center; color: var(--text-muted); font-size: 12px; }
+
+  /* Issues tab */
+  .issue-type-section { margin-bottom: 32px; }
+  .issue-type-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    cursor: pointer;
+  }
+  .issue-type-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .issue-type-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .issue-type-desc { font-size: 12px; color: var(--text-muted); flex: 2; }
+  .issue-type-count {
+    font-size: 20px; font-weight: 700; min-width: 40px; text-align: right;
+  }
+  .issue-type-body {
+    border: 1px solid var(--border); border-radius: 0 0 12px 12px;
+    overflow: hidden; background: #ffffff;
+  }
+  .issue-item {
+    display: grid;
+    grid-template-columns: 200px 1fr 110px 130px;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .issue-item:last-child { border-bottom: none; }
+  .issue-item:hover { background: var(--surface2); }
+  .issue-col {
+    padding: 11px 16px;
+    font-size: 12px;
+    border-right: 1px solid var(--border);
+    display: flex; align-items: flex-start;
+  }
+  .issue-col:last-child { border-right: none; }
+  .issue-col-header {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    background: var(--surface2); padding: 8px 16px;
+  }
+  .issue-problem { font-weight: 500; color: var(--text); line-height: 1.5; }
+  .issue-detail { color: var(--text-muted); line-height: 1.5; }
+  .issue-count-cell { font-weight: 700; color: var(--text); }
+  .resolve-badge {
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
+    border-radius: 12px; white-space: nowrap; display: inline-flex;
+    align-items: center; gap: 4px;
+  }
+  .resolve-fm { background: rgba(255,107,107,0.12); color: #d64242; border: 1px solid rgba(255,107,107,0.3); }
+  .resolve-guide { background: rgba(108,99,255,0.12); color: #6c63ff; border: 1px solid rgba(108,99,255,0.3); }
+  .resolve-process { background: rgba(6,214,160,0.12); color: #04a87b; border: 1px solid rgba(6,214,160,0.3); }
+  .resolve-comm { background: rgba(255,166,0,0.12); color: #c47c00; border: 1px solid rgba(255,166,0,0.3); }
+  .resolve-policy { background: rgba(17,138,178,0.12); color: #0e6d8e; border: 1px solid rgba(17,138,178,0.3); }
+  .issue-header-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 110px 130px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .issues-summary-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px;
+  }
+  .issues-summary-card {
+    border-radius: 12px; padding: 16px; border: 1px solid var(--border);
+    background: var(--surface); text-align: center;
+  }
+  .issues-summary-num { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .issues-summary-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+  .priority-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">홈즈 CX본부 · VOC 분석 리포트</div>
+  <h1>스튜디오 VOC 현황 분석</h1>
+  <div class="header-meta">
+    <span>📅 기준일: 2026.04.27</span>
+    <span>📊 전체 VOC: 339건</span>
+    <span>🏢 분석 지점: 5개</span>
+    <span>⭐ 선정릉 기준</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-tab active" onclick="showTab('overview')">전체 요약</button>
+  <button class="nav-tab" onclick="showTab('branch')">지점별 분석</button>
+  <button class="nav-tab" onclick="showTab('detail')">카테고리 상세</button>
+  <button class="nav-tab" onclick="showTab('issues')">이슈 유형 분석</button>
+  <button class="nav-tab" onclick="showTab('priority')">✅ 우선순위 설정</button>
+  <button class="nav-tab" onclick="showTab('seonjeongneung')">⭐ 선정릉</button>
+  <button class="nav-tab" onclick="showTab('anam')">안암</button>
+  <button class="nav-tab" onclick="showTab('hoegi')">아코모회기</button>
+  <button class="nav-tab" onclick="showTab('namyeong')">남영</button>
+  <button class="nav-tab" onclick="showTab('gasan')">아코모가산</button>
+</nav>
+
+<div class="content">
+
+  <!-- ===== TAB 1: OVERVIEW ===== -->
+  <div id="tab-overview" class="tab-panel active">
+
+    <div class="summary-grid">
+      <div class="summary-card total">
+        <div class="card-branch">전체</div>
+        <div class="card-num">339</div>
+        <div class="card-label">총 VOC 건수</div>
+      </div>
+      <div class="summary-card 선정릉">
+        <div class="card-branch">선정릉</div>
+        <div class="card-num">141</div>
+        <div class="card-label">41.6% 비중</div>
+      </div>
+      <div class="summary-card 안암">
+        <div class="card-branch">안암</div>
+        <div class="card-num">115</div>
+        <div class="card-label">33.9% 비중</div>
+      </div>
+      <div class="summary-card 아코모회기">
+        <div class="card-branch">아코모회기</div>
+        <div class="card-num">65</div>
+        <div class="card-label">19.2% 비중</div>
+      </div>
+      <div class="summary-card 남영">
+        <div class="card-branch">남영</div>
+        <div class="card-num">12</div>
+        <div class="card-label">3.5% 비중</div>
+      </div>
+      <div class="summary-card 아코모가산">
+        <div class="card-branch">아코모가산</div>
+        <div class="card-num">6</div>
+        <div class="card-label">1.8% 비중</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-label">📌 Key Insights</div>
+      <div class="insight-row">
+        <div class="insight-item">
+          <div class="insight-icon">🔧</div>
+          <div class="insight-text"><strong>시설고장(전용부) 26.3%</strong>로 1위. 안암(53건)이 압도적이며, 화장실·전기·보일러가 핵심 이슈.</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon">🏠</div>
+          <div class="insight-text"><strong>선정릉은 생활문의가 1위(24.1%)</strong>. 안면인식 등록, 관리비 관련 문의가 집중. 타 지점과 차별화된 패턴.</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-icon">📋</div>
+          <div class="insight-text"><strong>계약·임대료 관련 합계 30%</strong>. 연장·퇴실 안내 프로세스 체계화로 VOC 대폭 감소 가능.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 전체 카테고리 바 차트 -->
+    <div class="section-title">전체 지점 VOC 카테고리 분포</div>
+    <div class="bar-chart" id="overall-bar"></div>
+
+    <!-- Stacked bar by branch -->
+    <div class="section-title">지점별 카테고리 구성 비교</div>
+    <div class="stacked-bar-container" id="stacked-bars"></div>
+
+  </div>
+
+  <!-- ===== TAB 2: BRANCH ===== -->
+  <div id="tab-branch" class="tab-panel">
+    <div class="section-title">지점별 VOC 카테고리 분석</div>
+    <div class="branch-grid" id="branch-grid"></div>
+  </div>
+
+  <!-- ===== TAB 3: DETAIL ===== -->
+  <div id="tab-detail" class="tab-panel">
+    <div class="section-title">전체 지점 통합 카테고리 상세 분석</div>
+    <div class="insight-box">
+      <div class="insight-label">📖 읽는 방법</div>
+      <div class="insight-text">카테고리 클릭 → 키워드 목록 펼치기 / 키워드 클릭 → 실제 VOC 원문 확인. 원문이 5건 초과 시 '더 보기' 버튼으로 전체 조회 가능합니다.</div>
+    </div>
+    <div id="detail-list"></div>
+  </div>
+
+  <!-- ===== TAB: 이슈 유형 분석 ===== -->
+  <div id="tab-issues" class="tab-panel">
+    <div class="section-title">이슈 유형별 분류 및 해결 방향</div>
+    <div class="insight-box">
+      <div class="insight-label">📖 분류 기준</div>
+      <div class="insight-text">전체 VOC 원문을 실제 내용 기준으로 재분류. 해결 유형은 <strong>FM관리</strong>(시설물 수리·교체) / <strong>가이드 필요</strong>(사용법·안내 부재) / <strong>프로세스 필요</strong>(반복 행정업무 자동화) / <strong>커뮤니케이션</strong>(입주민 간 갈등·고지) / <strong>정책 수립</strong>(기준·규정 부재) 5가지로 구분.</div>
+    </div>
+    <div id="issues-container"></div>
+  </div>
+
+  <!-- ===== TAB: 우선순위 설정 ===== -->
+  <div id="tab-priority" class="tab-panel">
+    <!-- 이름 입력 오버레이 -->
+    <div id="pri-name-screen" style="display:flex;align-items:center;justify-content:center;padding:60px 20px">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:360px;text-align:center">
+        <div style="font-size:20px;margin-bottom:12px">✅</div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:8px">VOC 우선순위 설정</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:24px;line-height:1.7">이름을 입력하면 설정한 항목에<br>작성자 정보가 함께 기록됩니다.</div>
+        <input id="pri-name-input" placeholder="이름 또는 닉네임 입력"
+          style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-size:13px;outline:none;margin-bottom:10px;box-sizing:border-box;font-family:inherit">
+        <button id="pri-name-btn" onclick="priStart()"
+          style="width:100%;padding:10px;border-radius:10px;border:none;background:#6c63ff;color:#fff;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit">
+          시작하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 메인 우선순위 UI -->
+    <div id="pri-main" style="display:none">
+      <!-- 상단 바 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="section-title" style="margin-bottom:0">우선순위 설정</div>
+          <span id="pri-save-msg" style="font-size:12px;color:#04a87b;font-weight:600;opacity:0;transition:opacity .3s"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="pri-user-badge" style="font-size:12px;color:var(--text-muted);background:var(--surface2);padding:4px 12px;border-radius:20px;border:1px solid var(--border)"></span>
+          <button onclick="priShowDash()" id="pri-dash-btn"
+            style="font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;border:1px solid #6c63ff;background:#fff;color:#6c63ff;cursor:pointer;font-family:inherit">
+            📊 전체 현황
+          </button>
+        </div>
+      </div>
+
+      <!-- 지점별 탭 + 필터 -->
+      <div id="pri-branch-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
+
+      <!-- 지점 이슈 목록 -->
+      <div id="pri-issue-list"></div>
+
+      <!-- 전체 현황 대시보드 -->
+      <div id="pri-dashboard" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: 선정릉 ===== -->
+  <div id="tab-seonjeongneung" class="tab-panel">
+    <div id="branch-page-seonjeongneung"></div>
+  </div>
+
+  <!-- ===== TAB: 안암 ===== -->
+  <div id="tab-anam" class="tab-panel">
+    <div id="branch-page-anam"></div>
+  </div>
+
+  <!-- ===== TAB: 아코모회기 ===== -->
+  <div id="tab-hoegi" class="tab-panel">
+    <div id="branch-page-hoegi"></div>
+  </div>
+
+  <!-- ===== TAB: 남영 ===== -->
+  <div id="tab-namyeong" class="tab-panel">
+    <div id="branch-page-namyeong"></div>
+  </div>
+
+  <!-- ===== TAB: 아코모가산 ===== -->
+  <div id="tab-gasan" class="tab-panel">
+    <div id="branch-page-gasan"></div>
+  </div>
+
+</div>
+
+<script>
+const DATA = {
+  total: 339,
+  branches: {
+    '선정릉': {
+      total: 141,
+      color: '#6c63ff',
+      categories: {'임대료 및 관리비':36, '시설고장(전용부)':33, '시설사용문의':29, '계약관련문의':27, '생활문의':10, '시설고장(공용부)':3, '민원 항의':2, '기타':1},
+      subcategories: {
+        '계약관련문의': { '계약연장':11, '퇴실안내':6, '조기퇴실':3, '보증금':2, '임대료문의':1, '임대료납부':1 },
+        '시설고장(전용부)': { '냉장고/세탁기':7, '화장실':4, '누수':3, '전기/콘센트':3, '보일러/난방':2, '도어락':2, '소방':2, '소음':2, '바닥/벽':1 },
+        '생활문의': { '안면인식/출입':11, '관리비':7, '소음':3, '주차':3, '화장실':2, '퇴실안내':2, '임대료납부':2, '세금계산서':2, '에어컨':1, '누수':1 },
+        '임대료 및 관리비': { '임대료납부':15, '관리비':13, '보증금':2, '퇴실안내':1 },
+        '시설사용문의': { '안면인식/출입':7, '누수':5, '보일러/난방':3, '화장실':3, '공용시설':2, '에어컨':1, '바닥/벽':1 },
+        '기타': { '퇴실안내':7, '계약연장':5, '누수':2, '보증금':2, '관리비':2, '세금계산서':2 },
+        '시설고장(공용부)': { '공용시설':3 },
+        '민원 항의': { '소음':1, '공용시설':1 }
+      }
+    },
+    '아코모회기': {
+      total: 65,
+      color: '#ff6b6b',
+      categories: {'시설사용문의':19, '임대료 및 관리비':17, '계약관련문의':14, '시설고장(전용부)':6, '생활문의':6, '민원 항의':2, '기타':1},
+      subcategories: {
+        '기타': { '임대료납부':6, '관리비':6 },
+        '시설고장(전용부)': { '바닥/벽':2, '보일러/난방':1, '화장실':1, '냉장고/세탁기':1 },
+        '시설사용문의': { '주차':2, '화장실':1 },
+        '계약관련문의': { '조기퇴실':3, '퇴실안내':2, '계약연장':1, '임대료납부':1, '관리비':1, '세금계산서':1 },
+        '생활문의': { '임대료납부':2, '관리비':2, '보일러/난방':1, '냉장고/세탁기':1, '바닥/벽':1, '소음':1 },
+        '민원 항의': { '소음':1, '바닥/벽':1 }
+      }
+    },
+    '남영': {
+      total: 12,
+      color: '#ffd166',
+      categories: {'시설고장(전용부)':4, '시설사용문의':4, '생활문의':2, '임대료 및 관리비':1},
+      subcategories: {
+        '시설고장(전용부)': { '누수':2, '전기/콘센트':1, '냉장고/세탁기':1 },
+        '계약관련문의': { '계약연장':1, '주차':1 },
+        '시설사용문의': { '에어컨':1, '안면인식/출입':1 },
+        '임대료 및 관리비': {},
+        '기타': {}
+      }
+    },
+    '아코모가산': {
+      total: 6,
+      color: '#06d6a0',
+      categories: {'생활문의':3, '시설사용문의':1, '계약관련문의':1, '임대료 및 관리비':1},
+      subcategories: {
+        '생활문의': { '전기/콘센트':1, '관리비':1, '주차':1 },
+        '기타': { '주차':1 },
+        '시설고장(전용부)': { '바닥/벽':1 }
+      }
+    },
+    '안암': {
+      total: 115,
+      color: '#ff9a3c',
+      categories: {'시설고장(전용부)':50, '계약관련문의':24, '임대료 및 관리비':23, '시설사용문의':9, '생활문의':5, '시설고장(공용부)':4},
+      subcategories: {
+        '시설고장(전용부)': { '화장실':14, '전기/콘센트':10, '보일러/난방':6, '바닥/벽':5, '도어락':4, '냉장고/세탁기':3, '에어컨':2, '누수':2 },
+        '임대료 및 관리비': { '임대료납부':20, '보증금':1, '조기퇴실':1, '퇴실안내':1 },
+        '계약관련문의': { '계약연장':12, '퇴실안내':11, '도어락':1, '보증금':1, '조기퇴실':1, '임대료문의':1 },
+        '생활문의': { '퇴실안내':3, '임대료납부':1 },
+        '시설고장(공용부)': { '누수':1, '바닥/벽':1 },
+        '시설사용문의': { '보일러/난방':1, '도어락':1, '공용시설':1 },
+        '민원 항의': { '소음':1, '공용시설':1 },
+        '기타': { '도어락':1 }
+      }
+    }
+  },
+  overall_categories: {'시설고장(전용부)':93, '임대료 및 관리비':78, '계약관련문의':66, '시설사용문의':62, '생활문의':26, '시설고장(공용부)':7, '민원 항의':4, '기타':2},
+  overall_subcategories: {
+    '계약관련문의': {'퇴실/만기':27, '계약연장':25, '계약서작성':7, '조기퇴실/위약금':3, '기타':2, '입주변경':2},
+    '시설고장(공용부)': {'기타':5, '누수':2},
+    '시설고장(전용부)': {'기타':17, '화장실':15, '누수':12, '전기/콘센트':12, '보일러/난방':11, '냉장고/세탁기':10, '도어락':6, '인터넷/와이파이':5, '바닥/벽/도배':3, '에어컨':2},
+    '생활문의': {'기타':8, '냄새/위생':6, '소음':4, '택배/우편':4, '생활행정':2, '주차/흡연':2},
+    '임대료 및 관리비': {'임대료미납/독촉':27, '관리비문의':19, '임대료납부문의':15, '기타':9, '세금계산서/영수증':4, '보증금반환':4},
+    '시설사용문의': {'안면인식/출입':26, '기타':15, '가전사용법':7, '와이파이문의':6, '공용공간비번':5, '분리수거':2, '주차':1},
+    '기타': {'기타':2},
+    '민원 항의': {'층간소음민원':2, '공용공간이용불만':1, '기타':1},
+    'NaN': {},
+  }
+};
+
+const CAT_COLORS = {
+  '시설고장(전용부)': '#ff6b6b',
+  '생활문의': '#6c63ff',
+  '계약관련문의': '#ffd166',
+  '시설사용문의': '#06d6a0',
+  '임대료 및 관리비': '#118ab2',
+  '기타': '#888',
+  '시설고장(공용부)': '#ff9a3c',
+  '민원 항의': '#e63946'
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  // lazy render branch pages
+  const branchTabs = ['seonjeongneung','anam','hoegi','namyeong','gasan'];
+  if (branchTabs.includes(name)) renderBranchPage(name);
+}
+
+// ---- RENDER OVERALL BAR ----
+function renderOverallBar() {
+  const el = document.getElementById('overall-bar');
+  const cats = DATA.overall_categories;
+  const max = Math.max(...Object.values(cats));
+  let html = '';
+  let rank = 1;
+  for (const [cat, cnt] of Object.entries(cats)) {
+    const pct = Math.round(cnt / DATA.total * 100);
+    const w = Math.round(cnt / max * 100);
+    const color = CAT_COLORS[cat] || '#888';
+    html += `
+      <div class="bar-row">
+        <div class="bar-label">${rank++}. ${cat}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${w}%;background:${color}20;border-left:3px solid ${color};color:${color}">
+            ${pct}%
+          </div>
+        </div>
+        <div class="bar-count">${cnt}</div>
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ---- RENDER STACKED BARS ----
+function renderStackedBars() {
+  const el = document.getElementById('stacked-bars');
+  const catOrder = Object.keys(DATA.overall_categories);
+  let html = '<div class="stacked-bar-wrap">';
+  const allBranches = Object.keys(DATA.branches);
+  for (const branch of allBranches) {
+    const bdata = DATA.branches[branch];
+    const total = bdata.total;
+    let segs = '';
+    for (const cat of catOrder) {
+      const cnt = bdata.categories[cat] || 0;
+      if (!cnt) continue;
+      const pct = cnt / total * 100;
+      const color = CAT_COLORS[cat] || '#888';
+      segs += `<div class="stacked-seg" style="flex:${pct};background:${color};min-width:${pct>4?'auto':'0'}" title="${cat}: ${cnt}건 (${Math.round(pct)}%)">
+        ${pct > 8 ? Math.round(pct)+'%' : ''}
+      </div>`;
+    }
+    html += `
+      <div class="stacked-row">
+        <div class="stacked-label" style="color:${bdata.color}">${branch}</div>
+        <div class="stacked-track">${segs}</div>
+        <div class="stacked-total">${total}</div>
+      </div>`;
+  }
+  // Legend
+  html += '</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">';
+  for (const [cat, color] of Object.entries(CAT_COLORS)) {
+    html += `<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)">
+      <div style="width:10px;height:10px;border-radius:2px;background:${color}"></div>${cat}</div>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ---- RENDER BRANCH GRID ----
+function renderBranchGrid() {
+  const el = document.getElementById('branch-grid');
+  let html = '';
+  for (const [branch, bdata] of Object.entries(DATA.branches)) {
+    const cats = bdata.categories;
+    const total = bdata.total;
+    const maxCnt = Math.max(...Object.values(cats));
+    let rows = '';
+    let rank = 1;
+    for (const [cat, cnt] of Object.entries(cats)) {
+      const pct = Math.round(cnt/total*100);
+      const w = Math.round(cnt/maxCnt*100);
+      const color = CAT_COLORS[cat] || '#888';
+      const sub = bdata.subcategories[cat] || {};
+      const subKeys = Object.keys(sub);
+      const subTotal = Object.values(sub).reduce((a,b)=>a+b,0);
+      const pid = `sub-${branch}-${rank}`;
+      let subHtml = '';
+      if (subKeys.length) {
+        const subMax = Math.max(...Object.values(sub));
+        subHtml = subKeys.map(k => `
+          <div class="sub-item">
+            <span class="sub-item-name">· ${k}</span>
+            <div class="sub-item-bar"><div class="sub-item-fill" style="width:${Math.round(sub[k]/subMax*100)}%"></div></div>
+            <span class="sub-item-count">${sub[k]}</span>
+          </div>`).join('');
+      }
+      rows += `
+        <div class="cat-row" onclick="toggleSub('${pid}', this)" ${subKeys.length ? '' : 'style="cursor:default"'}>
+          <span class="cat-rank">${rank++}</span>
+          <span class="cat-name">${cat}</span>
+          <div class="cat-mini-bar"><div class="cat-mini-fill" style="width:${w}%;background:${color}"></div></div>
+          <span class="cat-count">${cnt}</span>
+          <span class="cat-pct">${pct}%</span>
+          ${subKeys.length ? '<span class="expand-icon">▶</span>' : '<span style="width:14px"></span>'}
+        </div>
+        ${subHtml ? `<div class="sub-panel" id="${pid}">${subHtml}</div>` : ''}`;
+    }
+    html += `
+      <div class="branch-card">
+        <div class="branch-card-header">
+          <div class="branch-name">
+            <div class="branch-dot" style="background:${bdata.color}"></div>${branch}
+          </div>
+          <div class="branch-total">총 ${total}건</div>
+        </div>
+        <div class="branch-card-body">${rows}</div>
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ---- VOC RAW DATA (keyword → original texts) ----
+const VOC_RAW = {"overall":{"계약관련문의":{"계약연장":[{"b":"선정릉","t":"연장 시 인상 임대료 - 10,000,000원 1,440,375원 / 우선 리모델링 위해 연장 어렵다고 전달 / 2개월만 연장"},{"b":"선정릉","t":"연장문의 - 903호 / 은영님이 연장 진행중 / 단기 연장 후 퇴실"},{"b":"선정릉","t":"온라인 연장계약서 서명기한 만료로 재작성 / 재전송 서명완료 아카이빙 완료"},{"b":"선정릉","t":"석채원 기존 퇴실일 2월 28일 이사 일정으로 4일 연장 희망"},{"b":"선정릉","t":"백은영 이사 기존 퇴실일 2월 28일 이사 일정으로 4일 연장 희망"},{"b":"선정릉","t":"임대료 문의 2월은 연장계약 인상분 일할계산 적용되어 151만원 이후로는 155만원"},{"b":"선정릉","t":"연장문의"},{"b":"선정릉","t":"연장문의"},{"b":"선정릉","t":"2개월 연장 및 연장조건"},{"b":"선정릉","t":"2개월 연장"},{"b":"선정릉","t":"연장계약서 사본 전달요청"},{"b":"선정릉","t":"2월 5일까지 단기 연장 문의"},{"b":"선정릉","t":"계약연장 문의"},{"b":"아코모회기","t":"연장계약서 작성 문의 / 목, 금 중 2시 희망 일정 확인 후 답변 준다 함"},{"b":"안암","t":"12/21 만기 → 12/22 비행기로 연장 요청 / 8시 퇴실 + 라운지 사물함 임시 사용"},{"b":"안암","t":"계약 연장 요청 / 그래비티 컨펌 후 전자 계약, 3/12 날인 완료"},{"b":"안암","t":"6/30 만기 → 7/7 단기 연장 가능 여부 문의 / 표준임대차 계약서 서명 완료"},{"b":"안암","t":"2026년 10월 25일까지 연장 희망 / 엔코 연장, 3/24 날인 완료"},{"b":"안암","t":"단기 연장 희망(6/4 → 6/17) / 3/27 계약 체결 완료"},{"b":"안암","t":"5월 계약 만기 연장 확인 요청서 발송 / 퇴실 결정"},{"b":"안암","t":"5월 계약 만기 연장 확인 요청서 발송 / 연장 결정"},{"b":"안암","t":"계약 연장 요청 접수 / 4/1 계약서 서명 완료"},{"b":"안암","t":"단기 연장 신청(6/30까지) / 그래비티 컨펌, 엔코 계약 진행"},{"b":"안암","t":"단기 연장 신청(7/23까지) / 계약서 작성 완료"},{"b":"안암","t":"8/31까지 연장 신청 + 12/20까지 장기 연장 시 할인 가능 여부 문의 / 그래비티 컨펌 완료"}],"퇴실/만기":[{"b":"선정릉","t":"중도퇴거 후 도어락 비밀번호 전달 1366 / 1월 17일에 퇴거 / 소송 및 청구 진행 중 별도 관리"},{"b":"선정릉","t":"조기퇴실 위약금 관련 / 전액 선납세대 / 조기퇴실 시에도 반환은 불가"},{"b":"선정릉","t":"퇴실체크 및 정출 2월 19일 진행예정"},{"b":"선정릉","t":"2026년 5월 29일 퇴실확정"},{"b":"선정릉","t":"퇴실확정 및 퇴실안내"},{"b":"선정릉","t":"퇴실확정"},{"b":"선정릉","t":"퇴실월 관리비 일할계산"},{"b":"선정릉","t":"퇴실점검 및 퇴실문의"},{"b":"선정릉","t":"퇴실안내"},{"b":"선정릉","t":"중도퇴실 문의 - 중도퇴실 원칙적 불가 / 차기임차인은 직접 구해야하며 중개수수료 발생 시 임차인 부담"},{"b":"선정릉","t":"퇴실안내 및 비밀번호 전달"},{"b":"선정릉","t":"퇴실안내 및 비밀번호 전달"},{"b":"아코모회기","t":"엔코스테이 통한 계약 중도퇴실 위약금 문의"},{"b":"아코모회기","t":"중도퇴거 요청. 위약금 얼마인지 알려달라고 함."},{"b":"아코모회기","t":"중도퇴거 위약금 문의"},{"b":"안암","t":"퇴실 확정 미응답 / 요청문 부착 후 12/4 연락 옴"},{"b":"안암","t":"퇴실 확정 미응답 / 요청문 부착, 만기 퇴실 처리"},{"b":"안암","t":"퇴실 확정 미응답 / 요청문 부착 후 12/4 연락 옴"},{"b":"안암","t":"퇴실 확정 미응답 / 도어락 요청문 부착, 당일 연락 옴"},{"b":"안암","t":"수납강화형 팬트리 옷걸이 떨어짐 / 비용 청구 없이 보관, 퇴실 후 벽보수"},{"b":"안암","t":"1/15 만기 예정인데 1/9 선퇴실 신청 / 1/9 퇴실 완료"},{"b":"안암","t":"퇴실 전 폐기물 처리 도움 요청 / 외국인 온라인 신청 불가, 비용 받고 처리(2만원)"},{"b":"안암","t":"비상조명 건전지 방전 / 손전등으로 교체 예정 (퇴실 후)"},{"b":"안암","t":"중도퇴실 희망, 차기 입주자 직접 구하는 중 / 차기 계약 체결"},{"b":"안암","t":"개인 사정으로 4월 계약 종료 문의 / 중도 퇴실 안내, 부동산 중개수수료 임차인 부담"},{"b":"안암","t":"5/21 조기 퇴실 + 보증금 반환 절차 문의 / 만기일 6/15 룸체크 후 반환 안내"},{"b":"안암","t":"중도 퇴실 의사 / 대기자 있는 경우 가능 여부 문의, 안내문 링크 전달"}],"계약서작성":[{"b":"선정릉","t":"306호 임대차계약서 사본 요청"},{"b":"아코모회기","t":"법인으로 계약서 변경 가능한지 문의."},{"b":"아코모회기","t":"입주일 변경 문의 - 계약서 수정하여 다시 작성 안내완료"},{"b":"아코모회기","t":"계약서 작성 관련 문의"},{"b":"아코모회기","t":"계약 승계 요청 3월3일에 작성 예정"},{"b":"아코모회기","t":"계약서 스캔본 전달 요청"},{"b":"안암","t":"신규 입주자 홈버튼 등록 필요 / 계약서 아카이빙 후 처리"}],"조기퇴실/위약금":[{"b":"선정릉","t":"중도해지 문의 - 직접 차기 임차인 구하면 된다고 전달 중개수수료는 임차인 부담 전달"},{"b":"아코모회기","t":"바닥만 따뜻해지고 공기가 안 따뜻하다고 함."},{"b":"아코모가산","t":"결로가 점점 심해지고 곰팡이가 많이 피었다. / 송대리님 현장 방문\n-> 호실 이전 안내드렸지만, 입주자측에서 그냥 거주하는 것으로 마무리"}],"기타":[{"b":"아코모회기","t":"거주확인서 제공 가능한지 문의"},{"b":"아코모회기","t":"손님이랑 투어 옴"}],"입주변경":[{"b":"아코모회기","t":"입주 문의"},{"b":"아코모회기","t":"비자 문제가 생겨서 문의"}]},"시설고장(공용부)":{"기타":[{"b":"선정릉","t":"13층 키오스크 고장 문의 / 키오스크 결제 이후 내역 전달 요청 / 추후 결제 완료"},{"b":"선정릉","t":"라운지 커피머신 수리 - 부품 불량 채결"},{"b":"선정릉","t":"라운지 싱크대 막힘 - 배관 교체"},{"b":"안암","t":"현관문 도어락 걸쇠가 나온 채로 열려있다며 CCTV 확인 요청 / 본인이 닫지 않고 출근, 영상 확인 후 종결"},{"b":"안암","t":"방 천장(현관) 주변 알 수 없는 소음 / 옥상 자연배기구 노후 녹슴, WD 분사 임시 조치"}],"누수":[{"b":"안암","t":"8층 805/810호 외 누수 흔적 / 파사드 공사 시 외벽 방수 동반 진행 협의"},{"b":"안암","t":"창틀 누수 영상 접수 / 코킹·실리콘 작업 + 도배 보수, 외벽 방수 후속 필요"}]},"시설고장(전용부)":{"도어락":[{"b":"선정릉","t":"바닥 수선 및 도어락 교체 요청 / 방문 시 별도 이상 없어서 바닥한 시트지 보수"},{"b":"선정릉","t":"도어락 고장 / 건전지 교체 이후 정상작동"},{"b":"안암","t":"도어락 비번 입력 시 '내부에서 잠김' 멘트 발생 / 제조사 무상 AS 진행"},{"b":"안암","t":"세대 현관문 뻑뻑해짐 입주자 어머니 카톡 접수 / 현관문 고무 패킹 교체"},{"b":"안암","t":"갑자기 도어락 열리지 않음 / 아카라 AS 접수 후 당일 수리"},{"b":"안암","t":"현관문 안 열림 카톡 접수 / 도어락 걸쇠 플레이트 위치 어긋남, 수리 완료"}],"기타":[{"b":"선정릉","t":"호실 내 셋탑박스 문의 / 채널 수신만 가능하고 ott 기능은 없음 필요 시 스마트 tv 등 직접 설치"},{"b":"선정릉","t":"엘레베이터 수리일정 문의 / 3월 23일 수리 확정"},{"b":"선정릉","t":"11층 비상문 도어클로저 고장"},{"b":"선정릉","t":"엘레베이터 수리일정"},{"b":"선정릉","t":"임차인 사용중 부주의로 인해 생긴 문제에 대해서는 책임지지 않음"},{"b":"선정릉","t":"책상 LED 매립등 교체 2인치"},{"b":"아코모회기","t":"내창 깨짐 수리 요청."},{"b":"안암","t":"침대 헤드 램프 불량 카톡 접수 / 안정기 또는 전원선 연결 불량, 재설치"},{"b":"안암","t":"TV 리모컨 고장(806호와 교체 후) / 이스트라 새제품 받아 교체"},{"b":"안암","t":"세대 창문 블라인드 떨어짐 카톡 접수 / 앙카 교체 설치, 부서진 부속 임시 조치"},{"b":"안암","t":"침대 구즈넥 LED 램프 고장 카톡 접수 / 새제품 해외직배송 후 교체"},{"b":"안암","t":"입주자가 청소 중 스탠드 TV 넘어뜨려 화면 파손 / AS 비용 부담 후 교환 진행"},{"b":"안암","t":"방안 화학약품 같은 냄새 / 하수구 트랩 설명 + 환기 안내"},{"b":"안암","t":"인덕션 가동 중 정지, E6 에러 / 11/13 인덕션 띄울 틀 제작 설치"},{"b":"안암","t":"세대 중문·TV거치대 보수 접수 / 중문 시공업체 12/31 수리 완료"},{"b":"안암","t":"갑자기 TV 안 나옴 / 구글 로그인 오류, HDMI1 외부입력 안내, 정상 복구"},{"b":"안암","t":"세대 TV가 유튜브만 나옴 카톡 접수 / 이스트라 AS 진행, 4/15 기사 방문"}],"누수":[{"b":"선정릉","t":"화장실 누수 / 누수업체 현장확인 요청 - 2월 19일 또는 20일에 작업 예정 디유에서 우선 진행 / 503호 대체호실"},{"b":"선정릉","t":"수전 누수 및 수압조절 / 감압기 올리고 수전 좌측하단 테프론 작업 계량기 황동관 분리되어 테프론 감아 재결합"},{"b":"선정릉","t":"304호 누수로 인하 화장실 보수 공사진행으로 인한 보상요청 (스타벅스 3만원권 지급예정) / 화장실 대체 사용호실 503 / 청소진행"},{"b":"선정릉","t":"세탁기, 샤워기 배관 누수로 인한 협조 요청"},{"b":"선정릉","t":"감지기 누수로 인한 교체 필요 / 고무패킹"},{"b":"선정릉","t":"누수 공사 협조 요청"},{"b":"선정릉","t":"누수 공사 협조 요청"},{"b":"선정릉","t":"악취 / 다른세대 누수로 인한 악취로 빠른시일내에 조치예정 전달"},{"b":"선정릉","t":"해바라기 수전 누수 / 특정시간에만 주기적으로 발생 현재는 이상이 없어 별도 조치는 어렵다"},{"b":"남영","t":"싱크대 누수 수리 요청 _4/25(토)진행예정"},{"b":"남영","t":"싱크대 누수관련 공유"},{"b":"안암","t":"세대 화장실 천장 누수 접수 / 701호 하수관 끝부분 누수, 시공업체 방문 작업 완료"}],"화장실":[{"b":"선정릉","t":"수압, 샤워부스 / 외부 감압기 조절 샤워부스는 WD 예정"},{"b":"선정릉","t":"샤워실 유리문 파손 / 실버 고릴라즈에서 수리 진행"},{"b":"선정릉","t":"수전"},{"b":"아코모회기","t":"화장실 벽면에서 물이 떨어지는 소리가 지속적으로 남.\n12월 이후부터 소리가 커져서 자다가 깰 정도라고 함. 문제 해결 또는 호실변경 희망."},{"b":"안암","t":"입주 체크리스트 - 소화기 미배치, 화장실 수전 불량, 신발장 다보 불량, 화장실문 안닫힘 / 모두 보수 완료"},{"b":"안암","t":"변기 물 내린 후 차오르는 소리 큼 카톡 접수 / 직수관 수압 조절로 해결"},{"b":"안암","t":"변기 막힘 도움 요청 카톡 접수 / 유압 뚫어뻥으로 통수 완료"},{"b":"안암","t":"세면대 팝업헤드 들어가 안 나옴 + 하수구 냄새 / 물때 제거 + 역류방지 트랩 재체결"},{"b":"안암","t":"싱크대 수전 손잡이 빠짐 / 육각렌치로 현장 수리"},{"b":"안암","t":"세면대 배수 불량 카톡 접수 / 입주자 머리카락으로 배수 불량, 제거"},{"b":"안암","t":"변기 막힘 도움 요청 / 휴지로 추정, 통수 완료"},{"b":"안암","t":"화장실 변기 막힘 도움 요청 / 뚫어뻥으로 해결, 투입 금지 안내"},{"b":"안암","t":"화장실 환풍기 작동 안 함 / 전원선 미체결 확인, 재체결 후 정상"},{"b":"안암","t":"주말 변기 막힘 카톡 / 입주자 본인이 뚫어뻥으로 해결"},{"b":"안암","t":"싱크대 수전 손잡이 빠짐 / 4/24 방문, 나사 풀림 재고정 완료"}],"전기/콘센트":[{"b":"선정릉","t":"소방경보음"},{"b":"선정릉","t":"소방경보기 오작동"},{"b":"선정릉","t":"침대 조명 및 문 유격 - 4월 9일 오전 10시 방문예정 / 이후 방문 일정 조율을 위해 방문 가능시간 문의했으나 무응답"},{"b":"남영","t":"콘센트 커버 수리"},{"b":"안암","t":"세대 내 콘센트 불량 카톡 접수 / 빌트인 장 콘센트에 플러그 일부 꽂힌 상태로 제거 후 정상"},{"b":"안암","t":"인덕션 가동 중 냄새 + 차단기 떨어짐 / 차단기 불량으로 새 제품 교체"},{"b":"안암","t":"침대 헤드 조명 수리 필요 카톡 접수 / 11/25 새제품 통교체"},{"b":"안암","t":"1) 청소약품 기름 냄새로 두통 2) 침대 헤드 조명 또 고장 / 안정기 통교체"},{"b":"안암","t":"세대 차단기 떨어짐 카톡 접수 / 멀티탭·변환 어댑터 누전, 콘센트 변경 안내"},{"b":"안암","t":"주말 중 전기 안 들어옴 카톡 접수 / 6층 메인 배전반 차단기 안내, 정상 복구"},{"b":"안암","t":"침대 헤드 조명 깜빡임 문의 접수 / 새 제품으로 교체"},{"b":"안암","t":"주말 밤 전등 모두 안 켜짐 카톡 접수 / 차단기 내려간 것, 자체 복구"}],"바닥/벽/도배":[{"b":"선정릉","t":"바닥보수"},{"b":"아코모회기","t":"방충망 설치가능성 여부"},{"b":"안암","t":"세대 내부 방충망 찢어짐 보수 요청 카톡 접수 / 외부 덮음 형태로 복구"}],"보일러/난방":[{"b":"선정릉","t":"보일러실 누수 확인 - 이상 무"},{"b":"선정릉","t":"보일러실 누수 확인 - 이상 무"},{"b":"선정릉","t":"가스 누출은 아니고 보일러실 하수구 냄새로 추정 차주 월요일 트랩설치예정"},{"b":"선정릉","t":"보일러실 호스 분리되어 있다는 민원 / 해당 호스 사용하지 않는 배관으로 전세대 모두 분리되어 있음"},{"b":"아코모회기","t":"보일러 동파 수리 요청"},{"b":"안암","t":"보일러실 가스누설탐지기 배터리 방전 의심 알람 / 8/27 배터리 교체 재설치"},{"b":"안암","t":"보일러·인터넷 갑자기 작동 안됨 카톡 접수 / 두꺼비집 전열1 내려간 것 확인 후 복구"},{"b":"안암","t":"욕실 세면대 온수 출수 안됨 접수 / 온수 앵글밸브 잠겨있어 다시 열어 해결"},{"b":"안암","t":"욕조 수전 온수 수압 약함 / 온수 수압 조절밸브 조정"},{"b":"안암","t":"새벽에 온수 안 나옴 카톡 접수 / 컨트롤러 설명서 전달, 자체 해결"},{"b":"안암","t":"방 천장 도배지에 주름 카톡 접수 / 결로 의심, 환기 + 난방 온도 조절 안내"}],"냉장고/세탁기":[{"b":"선정릉","t":"세탁기 노후화"},{"b":"선정릉","t":"냉장고 성에제거"},{"b":"선정릉","t":"냉장고 물고임 냉장칸"},{"b":"선정릉","t":"세탁기 에러코드 5E -  배수필터 이물질 제거"},{"b":"선정릉","t":"동일 에로코드 재발생되어 세탁기 교체 일정 조율 / 26.04.22 세탁기 교체완료 LG-F9WTQ"},{"b":"아코모회기","t":"세탁기 물이 바닥에 새서 확인 요청"},{"b":"남영","t":"냉장고 냉장실 냉기가 약함"},{"b":"안암","t":"싱크대 인덕션이 고정되지 않고 흔들림 / 세탁기 설치업체 방문하여 조정"},{"b":"안암","t":"냉동실 얼음이 얼지 않고 시원하지 않음 / 온도 설정 변경"},{"b":"안암","t":"세탁기 곰팡이 냄새 신고 / 필터·고무패킹 청소 안내, 통세척 가동"}],"인터넷/와이파이":[{"b":"아코모회기","t":"와이파이가 안된다고 함. 오후 7시 이후에 수리 요청"},{"b":"안암","t":"세대 인터넷 안 됨 카톡 접수 / 접촉 불량, 업체 점검"},{"b":"안암","t":"세대 인터넷 자주 끊김 / 업체 점검 진행"},{"b":"안암","t":"인터넷 속도 카톡 문의 / 100M, 통신실 장비 노후 안내"},{"b":"안암","t":"세대 와이파이 끊김 카톡 접수 / 10/22 업체 방문하여 점검"}],"에어컨":[{"b":"안암","t":"에어컨 찬바람 안 나옴 / 8/11 전기 차단기 교체 완료"},{"b":"안암","t":"에어컨 누전 차단기 떨어짐 / 8/18 전기 시공업체 방문 수리 완료"}]},"생활문의":{"소음":[{"b":"선정릉","t":"소음문의 - 주말에는 관리사무소 연락"},{"b":"선정릉","t":"세탁기 소음 / 이후 별도 가능시간 요청했으나 연락이 없는 상태"},{"b":"선정릉","t":"13층 라운지 음주 및 소음 / 뿌리오 전체 문자 전달"},{"b":"안암","t":"윗층 층간 소음으로 연휴간 민원 접수 / 808호 주의 안내 + 8층 게시판 게시"}],"생활행정":[{"b":"선정릉","t":"1월 가스비 정산 및 전입신고 요청 / 전출 전입 완료 / 2월 일반관리비에 가스요금 52,806원 추가하여 부과완료"},{"b":"남영","t":"전입신고 문의"}],"택배/우편":[{"b":"선정릉","t":"택배 수령 문의"},{"b":"아코모회기","t":"택배 보관 관련 문의 및 입주 관련 문의"},{"b":"아코모가산","t":"택배분실 -> 시점 확인하여 관리실에서 볼 수 있도록 안내 완료"},{"b":"안암","t":"다른 세대 우편물 본인 집으로 오배송 카톡 접수 / 우편 배달원에 주소 끝까지 확인 요청"}],"기타":[{"b":"선정릉","t":"룸투어 협조"},{"b":"선정릉","t":"온수사용"},{"b":"아코모회기","t":"전달요첨 / 11월, 12월 관리비 / 12월 ~1월 도시가스요금 카카오톡으로 전달"},{"b":"아코모회기","t":"침구류 제공 가능한지 여부 - 불가능 안내 완료"},{"b":"아코모회기","t":"침대 사이즈 문의"},{"b":"남영","t":"삼삼엠투 단기계약자 - 침구 제공여부 문의 -> 직접 준비 안내"},{"b":"아코모가산","t":"101동 803호 침대만 우선 설치하고 감 / 입주일은 17일인데 해당부분은 미리 이야기했다고 함"},{"b":"안암","t":"라운지 음식물 무분별 폐기·트레이닝룸 상의 탈의 이용 / 라운지 이용 가이드 게시 완료"}],"주차/흡연":[{"b":"선정릉","t":"방문객 주차요금 - 방문객 별도 할인 없음"},{"b":"아코모가산","t":"흡연 및 방문객 기계식 주차장 사용 안내문자"}],"냄새/위생":[{"b":"선정릉","t":"가스냄새 / 코원에너지에 연락 요청"},{"b":"선정릉","t":"세탁기 뒤쪽 악취 세대 방문하여 확인필요 / 계량기 습기로 인한 문제 임차인 전달 계량기 함에 습기제거제 비치"},{"b":"아코모회기","t":"하수구 냄새. 물도 잘 안빠짐. 확인 요청"},{"b":"아코모회기","t":"세탁기 및 환풍구에서 파마약 같은 냄새"},{"b":"안암","t":"집안 모기·벌레 발생 / 보일러실 유가에 거름망 뒤집어 설치하여 해결"},{"b":"안암","t":"도시가스 정기 검침 중 가스 냄새 신고 / 예스코 시설팀 방문 점검"}]},"임대료 및 관리비":{"임대료납부문의":[{"b":"선정릉","t":"샤워기 헤드 교체 및 관리비 Wise 납부 / 직접 교체 및 12월 관리비 wise 입금 확인"},{"b":"선정릉","t":"1월 관리비 Wise로 입금 확인 / 납부확인"},{"b":"선정릉","t":"계좌번호가 이체가 되지 않는다. / 임대료 및 관리비 총 청구금액으로 입금 필요"},{"b":"선정릉","t":"가상계좌정보문의"},{"b":"선정릉","t":"임대료 및 관리비 가상계좌 이체오류"},{"b":"선정릉","t":"임대료 및 관리비 계산서 발행여부 / 납부확인증 전달 / 계산서는 개인 홈텍스에서 조회가능"},{"b":"아코모회기","t":"임대료 분할 납부 확인 요청"},{"b":"아코모회기","t":"임대료 납부 확인 요청"},{"b":"아코모회기","t":"관리비, 퇴실청소비 입금 확인 요청"},{"b":"아코모회기","t":"관리비 납부 확인 문의"},{"b":"아코모회기","t":"임대료 및 관리비 입금 확인 문의"},{"b":"아코모회기","t":"임대료 입금 확인 요청"},{"b":"아코모회기","t":"선납 임대료 입금 확인 요청"},{"b":"아코모회기","t":"가스비 납부 방법 문의"},{"b":"안암","t":"ARC 발급용 임대료 납부 영수증 요청 / 1개월분 임대료 명시 영수증 제작 전달"}],"관리비문의":[{"b":"선정릉","t":"관리비 세금계산서 발행 요청 / 지인님 한번 더 요청 및 지인이랑 소통하여 해결예정"},{"b":"선정릉","t":"관리비 및 임대료 고지서 문의 / 모바일고지서 자동전달"},{"b":"선정릉","t":"관리비 부과 시 멤버쉽 제외하여 부과 / 1년 임대료 및 멤버쉽 선납완료"},{"b":"선정릉","t":"현재 해외에 있어 1월 관리비 3월에 납부 예정 - 납부완료"},{"b":"선정릉","t":"관리비 부과 확인"},{"b":"선정릉","t":"2월 임대료 및 1월 관리비 하나은행 계좌로 직접 입금 2026.02.15 / 확인 및 입금처리 완료"},{"b":"선정릉","t":"6개월 연장문의 기존 조건 유지 / 월 임대료: 155만원(렌트프리: 매월 14만원) / 기본 관리비: 15만원"},{"b":"선정릉","t":"세금계산서 발행요청 발행 지인님 요청 완료 관리비만 발행"},{"b":"선정릉","t":"청구서 수신 번호 분리 임대료과 관리비 납부대상이 다름 그대로 유지"},{"b":"선정릉","t":"관리비 해외 송금 문의 wise"},{"b":"선정릉","t":"관리비 고지서 문의  / 관리비 고지서 재전송"},{"b":"선정릉","t":"부모님이 임대료 및 관리비 문의"},{"b":"선정릉","t":"임차인 본인이 임대료 및 관리비 문의"},{"b":"아코모회기","t":"관리비 고지서 모바일로 전달 요청"},{"b":"아코모회기","t":"관리비 고지서 모바일로 전달 요청"},{"b":"아코모회기","t":"관리비 고지서 모바일로 전달 요청"},{"b":"아코모회기","t":"해외에 있어서 관리비 고지서 확인 불가능. 모바일로 전달 요청"},{"b":"아코모회기","t":"외국에 있어서 1월분에 관리비를 정산하지 못 함. 이메일로 전달요청"},{"b":"아코모가산","t":"관리비 비용 의문 제기 -> 전기 수도 검침 방식 설명 완료"}],"세금계산서/영수증":[{"b":"선정릉","t":"연말정산 사업자등록번호 요청 / 사업자등록번호 전달"},{"b":"선정릉","t":"세금계산서 발행"},{"b":"아코모회기","t":"부동산 a팀 세금계산서 보냈으니 확인해 달라"},{"b":"아코모회기","t":"영수증 발급 요청"}],"보증금반환":[{"b":"선정릉","t":"보증금 반환 요청 / 기안작성완료 반환 대기 중"},{"b":"선정릉","t":"일본계좌로 보증금 반환가능한지 문의 / 가능하지만 수수료는 임차인 부담 전달"},{"b":"선정릉","t":"퇴실안내 및 보증금 계좌 전달"},{"b":"선정릉","t":"퇴실 시 보증금 동시 반환여부 5월 3일 퇴실 시 주말이고 5월 4일이 원래 계약 만료일이라 5월 4일 보증금 반환가능"}],"임대료미납/독촉":[{"b":"선정릉","t":"미납금액 전체확인요청"},{"b":"선정릉","t":"미납금액 정산 및 4일 연장 / 보증금 변제 및 완납 퇴실"},{"b":"선정릉","t":"7층 복도 창문폐쇄 / 관리비 청구서 및 연체 고지"},{"b":"선정릉","t":"관리비 청구서 및 연체 고지"},{"b":"선정릉","t":"관리비 청구서 및 연체 고지"},{"b":"선정릉","t":"미납금액 납부 계획 전달"},{"b":"선정릉","t":"관리비 연체료 및 납부 문의"},{"b":"선정릉","t":"미납임대료 분납요청 - 가상계좌 분리"},{"b":"선정릉","t":"미납독촉"},{"b":"안암","t":"11월 임대료 9,000원 미납 / 문자 발송 후 즉시 입금"},{"b":"안암","t":"11월 임대료 미납 / 입금 어려워 중도퇴실 희망, 보증금 정산"},{"b":"안암","t":"11월 임대료 미납 / 해외 송금 지연, 송금표 확인 후 처리"},{"b":"안암","t":"11월 임대료 미납 / 11/4 입금 완료"},{"b":"안암","t":"1월 임대료 미납 / 1/8 입금 확인"},{"b":"안암","t":"전차인 2월 임대료 미입금 / 2/3 입금 확인"},{"b":"안암","t":"전차인 2월 임대료 미납 / 게릴라즈에서 처리, 2/6 입금"},{"b":"안암","t":"전차인 2월 임대료 미납 / 2/6 입금 완료"},{"b":"안암","t":"3월 임대료 미납 / 카톡·문자 발송, 입금 스케줄 재조정 후 당일 입금"},{"b":"안암","t":"3월 임대료 미입금 / 3개월 선납으로 월 단위 변경, 메시지 발송 후 입금"},{"b":"안암","t":"4월 임대료 미입금 / 카톡 발송 후 입금 완료"},{"b":"안암","t":"4월 임대료 미입금 / 메시지 발송 후 4/6 입금 확인"},{"b":"안암","t":"4월 일부 미납(분납) / 4/6 입금 확인"},{"b":"안암","t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"b":"안암","t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"b":"안암","t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"b":"안암","t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"b":"안암","t":"4월 임대료 미입금 / 6/8까지 임대료·관리비 일괄 입금"}],"기타":[{"b":"선정릉","t":"미청구 된 멤버쉽"},{"b":"선정릉","t":"임대료 일할계산 문의"},{"b":"아코모회기","t":"가스비 청구서 납부 문의"},{"b":"아코모회기","t":"선납 임대료 문의 및 시설 사용 문의"},{"b":"남영","t":"수도요금 복지혜택 적용위한 고객번호 문의하여 안내"},{"b":"안암","t":"1년 계약 시 방학 4개월 임대료 조정 가능 여부 문의 / 재기님이 어머님께 직접 카톡 발송"},{"b":"안암","t":"월급일 변경으로 1월 월세 15일 입금 요청 / 1월 31일 입금 약속, 후속 팔로우"},{"b":"안암","t":"엔코스테이 입주자 임대료 결제 미진행 / 문자·DM·이메일 발송"},{"b":"안암","t":"1년 이상 연장 희망(2027-08-23) / 임대료 인상 없이 계약 유지"}]},"시설사용문의":{"안면인식/출입":[{"b":"선정릉","t":"노크타운 및 안면인식 추가등록 / 노크타운 등록 완료 안면인식 스케줄 확인 중"},{"b":"선정릉","t":"QR안됨 / 왼쪽 기계실 오른쪽 전산실 컴퓨터 다운되어 복구완료"},{"b":"선정릉","t":"노크타운 사용문의"},{"b":"선정릉","t":"노크타운 세대 등록"},{"b":"선정릉","t":"신이설 안면등록 요청"},{"b":"선정릉","t":"안면인식 / 가스 오류 코드 / 벨브 잠겨있어서 전입신고 이후 해결된다고 함"},{"b":"선정릉","t":"안면인식 등록 요청"},{"b":"선정릉","t":"노크타운 인식 장애 / 매일 23:59~00:01 서버 리붓"},{"b":"선정릉","t":"QR 출입코드 오류"},{"b":"선정릉","t":"입주안내 및 노크타운 등록 - 한국번호 및 외국인이라 노크타운 계정 생성 불가 임시계정 만들어서 안면인식 등록"},{"b":"선정릉","t":"주차등록 문의"},{"b":"선정릉","t":"주차등록 문의"},{"b":"선정릉","t":"안면인식 등록"},{"b":"선정릉","t":"안면인식 등록"},{"b":"선정릉","t":"안면인식 등록"},{"b":"선정릉","t":"안면인식 등록"},{"b":"선정릉","t":"신규 안면인식 등록"},{"b":"선정릉","t":"신규 안면인식 등록"},{"b":"선정릉","t":"출입문 QR 인식 불가 / 윈도우 자동 업데이트"},{"b":"선정릉","t":"안면인식 등록 요청"},{"b":"아코모회기","t":"예스코 명의 등록 방법 요청"},{"b":"남영","t":"주차 등록"},{"b":"남영","t":"1층 공유부 출입 방법"},{"b":"아코모가산","t":"자동차등록증 제출 및 기계식 주차장 사용"},{"b":"안암","t":"관리실 CCTV 로그인 정보 불일치 / ADT 명의 등록 및 사용자 등록 처리"},{"b":"안암","t":"도어락 비번·지문 등록 변경 희망 / 12/4 방문 초기화 후 등록 완료"}],"기타":[{"b":"선정릉","t":"세대 내 옵션 의자 반납 문의"},{"b":"선정릉","t":"라운지 냉난방"},{"b":"선정릉","t":"시스템 에어컨 전원종료"},{"b":"선정릉","t":"단수 종료시간 문의"},{"b":"선정릉","t":"13층 라운지 단수 여부"},{"b":"선정릉","t":"세대내 에어컨 청소진행 / 세대내 에어컨은 직접진행"},{"b":"아코모회기","t":"본인이 구매한 비데 설치 요청. 불가능 안내"},{"b":"아코모회기","t":"TV연결 및 수납장 하자 처리 요청"},{"b":"아코모회기","t":"상가 키 요청"},{"b":"남영","t":"에어컨 청소 직접 해야 하는 지 문의_입주민 진행으로 안내드림"},{"b":"남영","t":"입주안내 전달"},{"b":"안암","t":"보일러 작동 안된다고 입주자 어머니 연락 / 노션 보일러 작동 방법 카톡 전달"},{"b":"안암","t":"풀퍼니시드 옵션 편수냄비 태움 DM 접수 / 동일 브랜드 구매 링크 전달"},{"b":"안암","t":"집 인터넷 새벽 시간대 느려짐 / 셋업박스 빼고 개인 공유기 연결, 업체 문의 진행"},{"b":"안암","t":"라운지 사물함 사용 요청 / 2개월 55,000원 특별 배정"}],"공용공간비번":[{"b":"선정릉","t":"Wifi  비밀번호 문의"},{"b":"선정릉","t":"wifi 비밀번호 문의"},{"b":"아코모회기","t":"루프탑 비밀번호 문의"},{"b":"아코모회기","t":"2층 공용 화장실 비밀번호 문의"},{"b":"아코모회기","t":"공용부 와이파이 비밀번호 문의"}],"와이파이문의":[{"b":"선정릉","t":"WIFI 사용문의 / 공유기 리셋 후 정상작동"},{"b":"아코모회기","t":"와이파이 사용 문의"},{"b":"아코모회기","t":"수납장에 선반이 없음. 와이파이가 자꾸 끊김"},{"b":"아코모회기","t":"세대 내 와이파이가 잘 작동하지 않음."},{"b":"아코모회기","t":"주차 방법 및 와이파이 문의"},{"b":"안암","t":"집 와이파이 안 잡힘 카톡 접수 / 전원 온오프로 해결"}],"가전사용법":[{"b":"아코모회기","t":"TV 사용법 문의"},{"b":"아코모회기","t":"인덕션 사용 방법"},{"b":"아코모회기","t":"보일러 사용법"},{"b":"아코모회기","t":"하이라이트 사용 방법 문의"},{"b":"아코모회기","t":"TV 사용법 문의"},{"b":"안암","t":"인덕션 1구 작동 안 됨 카톡 접수 / 전용 용기 사용 여부 안내, 종료"},{"b":"안암","t":"세탁기 과열 의심 / 사용법 인지 부족, 가이드 번역 전송 + 안내"}],"분리수거":[{"b":"아코모회기","t":"쓰레기 버리는 곳 어딘지 문의"},{"b":"아코모회기","t":"분리수거 방법 문의"}],"주차":[{"b":"아코모회기","t":"주차 가능 여부 문의."}]},"기타":{"기타":[{"b":"선정릉","t":"6월 단기 임대문의 - 지금 시점에서 6월의 임대문의를 받기는 어렵다고 답장"},{"b":"아코모회기","t":"프린트 요청"}]},"민원 항의":{"층간소음민원":[{"b":"선정릉","t":"층간소음 / 층간소음 관련 뿌리오 전체 문자전달"},{"b":"아코모회기","t":"옆방 1203호 새벽소음문제"}],"공용공간이용불만":[{"b":"선정릉","t":"당신만의 방, 트레이닝룸 사용관련 민원"}],"기타":[{"b":"아코모회기","t":"소음관련 민원 / 익일 관련 문자 전송예정"}]},"NaN":{}},"branches":{"선정릉":{"계약관련문의":{"계약연장":[{"t":"연장 시 인상 임대료 - 10,000,000원 1,440,375원 / 우선 리모델링 위해 연장 어렵다고 전달 / 2개월만 연장"},{"t":"연장문의 - 903호 / 은영님이 연장 진행중 / 단기 연장 후 퇴실"},{"t":"온라인 연장계약서 서명기한 만료로 재작성 / 재전송 서명완료 아카이빙 완료"},{"t":"석채원 기존 퇴실일 2월 28일 이사 일정으로 4일 연장 희망"},{"t":"백은영 이사 기존 퇴실일 2월 28일 이사 일정으로 4일 연장 희망"},{"t":"임대료 문의 2월은 연장계약 인상분 일할계산 적용되어 151만원 이후로는 155만원"},{"t":"연장문의"},{"t":"연장문의"},{"t":"2개월 연장 및 연장조건"},{"t":"2개월 연장"},{"t":"연장계약서 사본 전달요청"},{"t":"2월 5일까지 단기 연장 문의"},{"t":"계약연장 문의"}],"퇴실/만기":[{"t":"중도퇴거 후 도어락 비밀번호 전달 1366 / 1월 17일에 퇴거 / 소송 및 청구 진행 중 별도 관리"},{"t":"조기퇴실 위약금 관련 / 전액 선납세대 / 조기퇴실 시에도 반환은 불가"},{"t":"퇴실체크 및 정출 2월 19일 진행예정"},{"t":"2026년 5월 29일 퇴실확정"},{"t":"퇴실확정 및 퇴실안내"},{"t":"퇴실확정"},{"t":"퇴실월 관리비 일할계산"},{"t":"퇴실점검 및 퇴실문의"},{"t":"퇴실안내"},{"t":"중도퇴실 문의 - 중도퇴실 원칙적 불가 / 차기임차인은 직접 구해야하며 중개수수료 발생 시 임차인 부담"},{"t":"퇴실안내 및 비밀번호 전달"},{"t":"퇴실안내 및 비밀번호 전달"}],"계약서작성":[{"t":"306호 임대차계약서 사본 요청"}],"조기퇴실/위약금":[{"t":"중도해지 문의 - 직접 차기 임차인 구하면 된다고 전달 중개수수료는 임차인 부담 전달"}]},"시설고장(공용부)":{"기타":[{"t":"13층 키오스크 고장 문의 / 키오스크 결제 이후 내역 전달 요청 / 추후 결제 완료"},{"t":"라운지 커피머신 수리 - 부품 불량 채결"},{"t":"라운지 싱크대 막힘 - 배관 교체"}]},"시설고장(전용부)":{"도어락":[{"t":"바닥 수선 및 도어락 교체 요청 / 방문 시 별도 이상 없어서 바닥한 시트지 보수"},{"t":"도어락 고장 / 건전지 교체 이후 정상작동"}],"기타":[{"t":"호실 내 셋탑박스 문의 / 채널 수신만 가능하고 ott 기능은 없음 필요 시 스마트 tv 등 직접 설치"},{"t":"엘레베이터 수리일정 문의 / 3월 23일 수리 확정"},{"t":"11층 비상문 도어클로저 고장"},{"t":"엘레베이터 수리일정"},{"t":"임차인 사용중 부주의로 인해 생긴 문제에 대해서는 책임지지 않음"},{"t":"책상 LED 매립등 교체 2인치"}],"누수":[{"t":"화장실 누수 / 누수업체 현장확인 요청 - 2월 19일 또는 20일에 작업 예정 디유에서 우선 진행 / 503호 대체호실"},{"t":"수전 누수 및 수압조절 / 감압기 올리고 수전 좌측하단 테프론 작업 계량기 황동관 분리되어 테프론 감아 재결합"},{"t":"304호 누수로 인하 화장실 보수 공사진행으로 인한 보상요청 (스타벅스 3만원권 지급예정) / 화장실 대체 사용호실 503 / 청소진행"},{"t":"세탁기, 샤워기 배관 누수로 인한 협조 요청"},{"t":"감지기 누수로 인한 교체 필요 / 고무패킹"},{"t":"누수 공사 협조 요청"},{"t":"누수 공사 협조 요청"},{"t":"악취 / 다른세대 누수로 인한 악취로 빠른시일내에 조치예정 전달"},{"t":"해바라기 수전 누수 / 특정시간에만 주기적으로 발생 현재는 이상이 없어 별도 조치는 어렵다"}],"화장실":[{"t":"수압, 샤워부스 / 외부 감압기 조절 샤워부스는 WD 예정"},{"t":"샤워실 유리문 파손 / 실버 고릴라즈에서 수리 진행"},{"t":"수전"}],"전기/콘센트":[{"t":"소방경보음"},{"t":"소방경보기 오작동"},{"t":"침대 조명 및 문 유격 - 4월 9일 오전 10시 방문예정 / 이후 방문 일정 조율을 위해 방문 가능시간 문의했으나 무응답"}],"바닥/벽/도배":[{"t":"바닥보수"}],"보일러/난방":[{"t":"보일러실 누수 확인 - 이상 무"},{"t":"보일러실 누수 확인 - 이상 무"},{"t":"가스 누출은 아니고 보일러실 하수구 냄새로 추정 차주 월요일 트랩설치예정"},{"t":"보일러실 호스 분리되어 있다는 민원 / 해당 호스 사용하지 않는 배관으로 전세대 모두 분리되어 있음"}],"냉장고/세탁기":[{"t":"세탁기 노후화"},{"t":"냉장고 성에제거"},{"t":"냉장고 물고임 냉장칸"},{"t":"세탁기 에러코드 5E -  배수필터 이물질 제거"},{"t":"동일 에로코드 재발생되어 세탁기 교체 일정 조율 / 26.04.22 세탁기 교체완료 LG-F9WTQ"}]},"생활문의":{"소음":[{"t":"소음문의 - 주말에는 관리사무소 연락"},{"t":"세탁기 소음 / 이후 별도 가능시간 요청했으나 연락이 없는 상태"},{"t":"13층 라운지 음주 및 소음 / 뿌리오 전체 문자 전달"}],"생활행정":[{"t":"1월 가스비 정산 및 전입신고 요청 / 전출 전입 완료 / 2월 일반관리비에 가스요금 52,806원 추가하여 부과완료"}],"택배/우편":[{"t":"택배 수령 문의"}],"기타":[{"t":"룸투어 협조"},{"t":"온수사용"}],"주차/흡연":[{"t":"방문객 주차요금 - 방문객 별도 할인 없음"}],"냄새/위생":[{"t":"가스냄새 / 코원에너지에 연락 요청"},{"t":"세탁기 뒤쪽 악취 세대 방문하여 확인필요 / 계량기 습기로 인한 문제 임차인 전달 계량기 함에 습기제거제 비치"}]},"임대료 및 관리비":{"임대료납부문의":[{"t":"샤워기 헤드 교체 및 관리비 Wise 납부 / 직접 교체 및 12월 관리비 wise 입금 확인"},{"t":"1월 관리비 Wise로 입금 확인 / 납부확인"},{"t":"계좌번호가 이체가 되지 않는다. / 임대료 및 관리비 총 청구금액으로 입금 필요"},{"t":"가상계좌정보문의"},{"t":"임대료 및 관리비 가상계좌 이체오류"},{"t":"임대료 및 관리비 계산서 발행여부 / 납부확인증 전달 / 계산서는 개인 홈텍스에서 조회가능"}],"관리비문의":[{"t":"관리비 세금계산서 발행 요청 / 지인님 한번 더 요청 및 지인이랑 소통하여 해결예정"},{"t":"관리비 및 임대료 고지서 문의 / 모바일고지서 자동전달"},{"t":"관리비 부과 시 멤버쉽 제외하여 부과 / 1년 임대료 및 멤버쉽 선납완료"},{"t":"현재 해외에 있어 1월 관리비 3월에 납부 예정 - 납부완료"},{"t":"관리비 부과 확인"},{"t":"2월 임대료 및 1월 관리비 하나은행 계좌로 직접 입금 2026.02.15 / 확인 및 입금처리 완료"},{"t":"6개월 연장문의 기존 조건 유지 / 월 임대료: 155만원(렌트프리: 매월 14만원) / 기본 관리비: 15만원"},{"t":"세금계산서 발행요청 발행 지인님 요청 완료 관리비만 발행"},{"t":"청구서 수신 번호 분리 임대료과 관리비 납부대상이 다름 그대로 유지"},{"t":"관리비 해외 송금 문의 wise"},{"t":"관리비 고지서 문의  / 관리비 고지서 재전송"},{"t":"부모님이 임대료 및 관리비 문의"},{"t":"임차인 본인이 임대료 및 관리비 문의"}],"세금계산서/영수증":[{"t":"연말정산 사업자등록번호 요청 / 사업자등록번호 전달"},{"t":"세금계산서 발행"}],"보증금반환":[{"t":"보증금 반환 요청 / 기안작성완료 반환 대기 중"},{"t":"일본계좌로 보증금 반환가능한지 문의 / 가능하지만 수수료는 임차인 부담 전달"},{"t":"퇴실안내 및 보증금 계좌 전달"},{"t":"퇴실 시 보증금 동시 반환여부 5월 3일 퇴실 시 주말이고 5월 4일이 원래 계약 만료일이라 5월 4일 보증금 반환가능"}],"임대료미납/독촉":[{"t":"미납금액 전체확인요청"},{"t":"미납금액 정산 및 4일 연장 / 보증금 변제 및 완납 퇴실"},{"t":"7층 복도 창문폐쇄 / 관리비 청구서 및 연체 고지"},{"t":"관리비 청구서 및 연체 고지"},{"t":"관리비 청구서 및 연체 고지"},{"t":"미납금액 납부 계획 전달"},{"t":"관리비 연체료 및 납부 문의"},{"t":"미납임대료 분납요청 - 가상계좌 분리"},{"t":"미납독촉"}],"기타":[{"t":"미청구 된 멤버쉽"},{"t":"임대료 일할계산 문의"}]},"시설사용문의":{"안면인식/출입":[{"t":"노크타운 및 안면인식 추가등록 / 노크타운 등록 완료 안면인식 스케줄 확인 중"},{"t":"QR안됨 / 왼쪽 기계실 오른쪽 전산실 컴퓨터 다운되어 복구완료"},{"t":"노크타운 사용문의"},{"t":"노크타운 세대 등록"},{"t":"신이설 안면등록 요청"},{"t":"안면인식 / 가스 오류 코드 / 벨브 잠겨있어서 전입신고 이후 해결된다고 함"},{"t":"안면인식 등록 요청"},{"t":"노크타운 인식 장애 / 매일 23:59~00:01 서버 리붓"},{"t":"QR 출입코드 오류"},{"t":"입주안내 및 노크타운 등록 - 한국번호 및 외국인이라 노크타운 계정 생성 불가 임시계정 만들어서 안면인식 등록"},{"t":"주차등록 문의"},{"t":"주차등록 문의"},{"t":"안면인식 등록"},{"t":"안면인식 등록"},{"t":"안면인식 등록"},{"t":"안면인식 등록"},{"t":"신규 안면인식 등록"},{"t":"신규 안면인식 등록"},{"t":"출입문 QR 인식 불가 / 윈도우 자동 업데이트"},{"t":"안면인식 등록 요청"}],"기타":[{"t":"세대 내 옵션 의자 반납 문의"},{"t":"라운지 냉난방"},{"t":"시스템 에어컨 전원종료"},{"t":"단수 종료시간 문의"},{"t":"13층 라운지 단수 여부"},{"t":"세대내 에어컨 청소진행 / 세대내 에어컨은 직접진행"}],"공용공간비번":[{"t":"Wifi  비밀번호 문의"},{"t":"wifi 비밀번호 문의"}],"와이파이문의":[{"t":"WIFI 사용문의 / 공유기 리셋 후 정상작동"}]},"기타":{"기타":[{"t":"6월 단기 임대문의 - 지금 시점에서 6월의 임대문의를 받기는 어렵다고 답장"}]},"민원 항의":{"층간소음민원":[{"t":"층간소음 / 층간소음 관련 뿌리오 전체 문자전달"}],"공용공간이용불만":[{"t":"당신만의 방, 트레이닝룸 사용관련 민원"}]}},"아코모회기":{"임대료 및 관리비":{"임대료납부문의":[{"t":"임대료 분할 납부 확인 요청"},{"t":"임대료 납부 확인 요청"},{"t":"관리비, 퇴실청소비 입금 확인 요청"},{"t":"관리비 납부 확인 문의"},{"t":"임대료 및 관리비 입금 확인 문의"},{"t":"임대료 입금 확인 요청"},{"t":"선납 임대료 입금 확인 요청"},{"t":"가스비 납부 방법 문의"}],"관리비문의":[{"t":"관리비 고지서 모바일로 전달 요청"},{"t":"관리비 고지서 모바일로 전달 요청"},{"t":"관리비 고지서 모바일로 전달 요청"},{"t":"해외에 있어서 관리비 고지서 확인 불가능. 모바일로 전달 요청"},{"t":"외국에 있어서 1월분에 관리비를 정산하지 못 함. 이메일로 전달요청"}],"기타":[{"t":"가스비 청구서 납부 문의"},{"t":"선납 임대료 문의 및 시설 사용 문의"}],"세금계산서/영수증":[{"t":"부동산 a팀 세금계산서 보냈으니 확인해 달라"},{"t":"영수증 발급 요청"}]},"시설고장(전용부)":{"보일러/난방":[{"t":"보일러 동파 수리 요청"}],"기타":[{"t":"내창 깨짐 수리 요청."}],"냉장고/세탁기":[{"t":"세탁기 물이 바닥에 새서 확인 요청"}],"화장실":[{"t":"화장실 벽면에서 물이 떨어지는 소리가 지속적으로 남.\n12월 이후부터 소리가 커져서 자다가 깰 정도라고 함. 문제 해결 또는 호실변경 희망."}],"인터넷/와이파이":[{"t":"와이파이가 안된다고 함. 오후 7시 이후에 수리 요청"}],"바닥/벽/도배":[{"t":"방충망 설치가능성 여부"}]},"시설사용문의":{"가전사용법":[{"t":"TV 사용법 문의"},{"t":"인덕션 사용 방법"},{"t":"보일러 사용법"},{"t":"하이라이트 사용 방법 문의"},{"t":"TV 사용법 문의"}],"와이파이문의":[{"t":"와이파이 사용 문의"},{"t":"수납장에 선반이 없음. 와이파이가 자꾸 끊김"},{"t":"세대 내 와이파이가 잘 작동하지 않음."},{"t":"주차 방법 및 와이파이 문의"}],"기타":[{"t":"본인이 구매한 비데 설치 요청. 불가능 안내"},{"t":"TV연결 및 수납장 하자 처리 요청"},{"t":"상가 키 요청"}],"공용공간비번":[{"t":"루프탑 비밀번호 문의"},{"t":"2층 공용 화장실 비밀번호 문의"},{"t":"공용부 와이파이 비밀번호 문의"}],"분리수거":[{"t":"쓰레기 버리는 곳 어딘지 문의"},{"t":"분리수거 방법 문의"}],"안면인식/출입":[{"t":"예스코 명의 등록 방법 요청"}],"주차":[{"t":"주차 가능 여부 문의."}]},"계약관련문의":{"계약서작성":[{"t":"법인으로 계약서 변경 가능한지 문의."},{"t":"입주일 변경 문의 - 계약서 수정하여 다시 작성 안내완료"},{"t":"계약서 작성 관련 문의"},{"t":"계약 승계 요청 3월3일에 작성 예정"},{"t":"계약서 스캔본 전달 요청"}],"퇴실/만기":[{"t":"엔코스테이 통한 계약 중도퇴실 위약금 문의"},{"t":"중도퇴거 요청. 위약금 얼마인지 알려달라고 함."},{"t":"중도퇴거 위약금 문의"}],"계약연장":[{"t":"연장계약서 작성 문의 / 목, 금 중 2시 희망 일정 확인 후 답변 준다 함"}],"기타":[{"t":"거주확인서 제공 가능한지 문의"},{"t":"손님이랑 투어 옴"}],"입주변경":[{"t":"입주 문의"},{"t":"비자 문제가 생겨서 문의"}],"조기퇴실/위약금":[{"t":"바닥만 따뜻해지고 공기가 안 따뜻하다고 함."}]},"생활문의":{"냄새/위생":[{"t":"하수구 냄새. 물도 잘 안빠짐. 확인 요청"},{"t":"세탁기 및 환풍구에서 파마약 같은 냄새"}],"기타":[{"t":"전달요첨 / 11월, 12월 관리비 / 12월 ~1월 도시가스요금 카카오톡으로 전달"},{"t":"침구류 제공 가능한지 여부 - 불가능 안내 완료"},{"t":"침대 사이즈 문의"}],"택배/우편":[{"t":"택배 보관 관련 문의 및 입주 관련 문의"}]},"민원 항의":{"기타":[{"t":"소음관련 민원 / 익일 관련 문자 전송예정"}],"층간소음민원":[{"t":"옆방 1203호 새벽소음문제"}]},"기타":{"기타":[{"t":"프린트 요청"}]}},"남영":{"시설고장(전용부)":{"전기/콘센트":[{"t":"콘센트 커버 수리"}],"냉장고/세탁기":[{"t":"냉장고 냉장실 냉기가 약함"}],"누수":[{"t":"싱크대 누수 수리 요청 _4/25(토)진행예정"},{"t":"싱크대 누수관련 공유"}]},"시설사용문의":{"안면인식/출입":[{"t":"주차 등록"},{"t":"1층 공유부 출입 방법"}],"기타":[{"t":"에어컨 청소 직접 해야 하는 지 문의_입주민 진행으로 안내드림"},{"t":"입주안내 전달"}]},"임대료 및 관리비":{"기타":[{"t":"수도요금 복지혜택 적용위한 고객번호 문의하여 안내"}]},"생활문의":{"기타":[{"t":"삼삼엠투 단기계약자 - 침구 제공여부 문의 -> 직접 준비 안내"}],"생활행정":[{"t":"전입신고 문의"}]},"NaN":{}},"아코모가산":{"시설사용문의":{"안면인식/출입":[{"t":"자동차등록증 제출 및 기계식 주차장 사용"}]},"생활문의":{"주차/흡연":[{"t":"흡연 및 방문객 기계식 주차장 사용 안내문자"}],"기타":[{"t":"101동 803호 침대만 우선 설치하고 감 / 입주일은 17일인데 해당부분은 미리 이야기했다고 함"}],"택배/우편":[{"t":"택배분실 -> 시점 확인하여 관리실에서 볼 수 있도록 안내 완료"}]},"계약관련문의":{"조기퇴실/위약금":[{"t":"결로가 점점 심해지고 곰팡이가 많이 피었다. / 송대리님 현장 방문\n-> 호실 이전 안내드렸지만, 입주자측에서 그냥 거주하는 것으로 마무리"}]},"임대료 및 관리비":{"관리비문의":[{"t":"관리비 비용 의문 제기 -> 전기 수도 검침 방식 설명 완료"}]}},"안암":{"시설고장(전용부)":{"화장실":[{"t":"입주 체크리스트 - 소화기 미배치, 화장실 수전 불량, 신발장 다보 불량, 화장실문 안닫힘 / 모두 보수 완료"},{"t":"변기 물 내린 후 차오르는 소리 큼 카톡 접수 / 직수관 수압 조절로 해결"},{"t":"변기 막힘 도움 요청 카톡 접수 / 유압 뚫어뻥으로 통수 완료"},{"t":"세면대 팝업헤드 들어가 안 나옴 + 하수구 냄새 / 물때 제거 + 역류방지 트랩 재체결"},{"t":"싱크대 수전 손잡이 빠짐 / 육각렌치로 현장 수리"},{"t":"세면대 배수 불량 카톡 접수 / 입주자 머리카락으로 배수 불량, 제거"},{"t":"변기 막힘 도움 요청 / 휴지로 추정, 통수 완료"},{"t":"화장실 변기 막힘 도움 요청 / 뚫어뻥으로 해결, 투입 금지 안내"},{"t":"화장실 환풍기 작동 안 함 / 전원선 미체결 확인, 재체결 후 정상"},{"t":"주말 변기 막힘 카톡 / 입주자 본인이 뚫어뻥으로 해결"},{"t":"싱크대 수전 손잡이 빠짐 / 4/24 방문, 나사 풀림 재고정 완료"}],"전기/콘센트":[{"t":"세대 내 콘센트 불량 카톡 접수 / 빌트인 장 콘센트에 플러그 일부 꽂힌 상태로 제거 후 정상"},{"t":"인덕션 가동 중 냄새 + 차단기 떨어짐 / 차단기 불량으로 새 제품 교체"},{"t":"침대 헤드 조명 수리 필요 카톡 접수 / 11/25 새제품 통교체"},{"t":"1) 청소약품 기름 냄새로 두통 2) 침대 헤드 조명 또 고장 / 안정기 통교체"},{"t":"세대 차단기 떨어짐 카톡 접수 / 멀티탭·변환 어댑터 누전, 콘센트 변경 안내"},{"t":"주말 중 전기 안 들어옴 카톡 접수 / 6층 메인 배전반 차단기 안내, 정상 복구"},{"t":"침대 헤드 조명 깜빡임 문의 접수 / 새 제품으로 교체"},{"t":"주말 밤 전등 모두 안 켜짐 카톡 접수 / 차단기 내려간 것, 자체 복구"}],"에어컨":[{"t":"에어컨 찬바람 안 나옴 / 8/11 전기 차단기 교체 완료"},{"t":"에어컨 누전 차단기 떨어짐 / 8/18 전기 시공업체 방문 수리 완료"}],"냉장고/세탁기":[{"t":"싱크대 인덕션이 고정되지 않고 흔들림 / 세탁기 설치업체 방문하여 조정"},{"t":"냉동실 얼음이 얼지 않고 시원하지 않음 / 온도 설정 변경"},{"t":"세탁기 곰팡이 냄새 신고 / 필터·고무패킹 청소 안내, 통세척 가동"}],"누수":[{"t":"세대 화장실 천장 누수 접수 / 701호 하수관 끝부분 누수, 시공업체 방문 작업 완료"}],"바닥/벽/도배":[{"t":"세대 내부 방충망 찢어짐 보수 요청 카톡 접수 / 외부 덮음 형태로 복구"}],"보일러/난방":[{"t":"보일러실 가스누설탐지기 배터리 방전 의심 알람 / 8/27 배터리 교체 재설치"},{"t":"보일러·인터넷 갑자기 작동 안됨 카톡 접수 / 두꺼비집 전열1 내려간 것 확인 후 복구"},{"t":"욕실 세면대 온수 출수 안됨 접수 / 온수 앵글밸브 잠겨있어 다시 열어 해결"},{"t":"욕조 수전 온수 수압 약함 / 온수 수압 조절밸브 조정"},{"t":"새벽에 온수 안 나옴 카톡 접수 / 컨트롤러 설명서 전달, 자체 해결"},{"t":"방 천장 도배지에 주름 카톡 접수 / 결로 의심, 환기 + 난방 온도 조절 안내"}],"기타":[{"t":"침대 헤드 램프 불량 카톡 접수 / 안정기 또는 전원선 연결 불량, 재설치"},{"t":"TV 리모컨 고장(806호와 교체 후) / 이스트라 새제품 받아 교체"},{"t":"세대 창문 블라인드 떨어짐 카톡 접수 / 앙카 교체 설치, 부서진 부속 임시 조치"},{"t":"침대 구즈넥 LED 램프 고장 카톡 접수 / 새제품 해외직배송 후 교체"},{"t":"입주자가 청소 중 스탠드 TV 넘어뜨려 화면 파손 / AS 비용 부담 후 교환 진행"},{"t":"방안 화학약품 같은 냄새 / 하수구 트랩 설명 + 환기 안내"},{"t":"인덕션 가동 중 정지, E6 에러 / 11/13 인덕션 띄울 틀 제작 설치"},{"t":"세대 중문·TV거치대 보수 접수 / 중문 시공업체 12/31 수리 완료"},{"t":"갑자기 TV 안 나옴 / 구글 로그인 오류, HDMI1 외부입력 안내, 정상 복구"},{"t":"세대 TV가 유튜브만 나옴 카톡 접수 / 이스트라 AS 진행, 4/15 기사 방문"}],"인터넷/와이파이":[{"t":"세대 인터넷 안 됨 카톡 접수 / 접촉 불량, 업체 점검"},{"t":"세대 인터넷 자주 끊김 / 업체 점검 진행"},{"t":"인터넷 속도 카톡 문의 / 100M, 통신실 장비 노후 안내"},{"t":"세대 와이파이 끊김 카톡 접수 / 10/22 업체 방문하여 점검"}],"도어락":[{"t":"도어락 비번 입력 시 '내부에서 잠김' 멘트 발생 / 제조사 무상 AS 진행"},{"t":"세대 현관문 뻑뻑해짐 입주자 어머니 카톡 접수 / 현관문 고무 패킹 교체"},{"t":"갑자기 도어락 열리지 않음 / 아카라 AS 접수 후 당일 수리"},{"t":"현관문 안 열림 카톡 접수 / 도어락 걸쇠 플레이트 위치 어긋남, 수리 완료"}]},"시설고장(공용부)":{"누수":[{"t":"8층 805/810호 외 누수 흔적 / 파사드 공사 시 외벽 방수 동반 진행 협의"},{"t":"창틀 누수 영상 접수 / 코킹·실리콘 작업 + 도배 보수, 외벽 방수 후속 필요"}],"기타":[{"t":"현관문 도어락 걸쇠가 나온 채로 열려있다며 CCTV 확인 요청 / 본인이 닫지 않고 출근, 영상 확인 후 종결"},{"t":"방 천장(현관) 주변 알 수 없는 소음 / 옥상 자연배기구 노후 녹슴, WD 분사 임시 조치"}]},"생활문의":{"냄새/위생":[{"t":"집안 모기·벌레 발생 / 보일러실 유가에 거름망 뒤집어 설치하여 해결"},{"t":"도시가스 정기 검침 중 가스 냄새 신고 / 예스코 시설팀 방문 점검"}],"기타":[{"t":"라운지 음식물 무분별 폐기·트레이닝룸 상의 탈의 이용 / 라운지 이용 가이드 게시 완료"}],"택배/우편":[{"t":"다른 세대 우편물 본인 집으로 오배송 카톡 접수 / 우편 배달원에 주소 끝까지 확인 요청"}],"소음":[{"t":"윗층 층간 소음으로 연휴간 민원 접수 / 808호 주의 안내 + 8층 게시판 게시"}]},"시설사용문의":{"가전사용법":[{"t":"인덕션 1구 작동 안 됨 카톡 접수 / 전용 용기 사용 여부 안내, 종료"},{"t":"세탁기 과열 의심 / 사용법 인지 부족, 가이드 번역 전송 + 안내"}],"안면인식/출입":[{"t":"관리실 CCTV 로그인 정보 불일치 / ADT 명의 등록 및 사용자 등록 처리"},{"t":"도어락 비번·지문 등록 변경 희망 / 12/4 방문 초기화 후 등록 완료"}],"기타":[{"t":"보일러 작동 안된다고 입주자 어머니 연락 / 노션 보일러 작동 방법 카톡 전달"},{"t":"풀퍼니시드 옵션 편수냄비 태움 DM 접수 / 동일 브랜드 구매 링크 전달"},{"t":"집 인터넷 새벽 시간대 느려짐 / 셋업박스 빼고 개인 공유기 연결, 업체 문의 진행"},{"t":"라운지 사물함 사용 요청 / 2개월 55,000원 특별 배정"}],"와이파이문의":[{"t":"집 와이파이 안 잡힘 카톡 접수 / 전원 온오프로 해결"}]},"임대료 및 관리비":{"임대료미납/독촉":[{"t":"11월 임대료 9,000원 미납 / 문자 발송 후 즉시 입금"},{"t":"11월 임대료 미납 / 입금 어려워 중도퇴실 희망, 보증금 정산"},{"t":"11월 임대료 미납 / 해외 송금 지연, 송금표 확인 후 처리"},{"t":"11월 임대료 미납 / 11/4 입금 완료"},{"t":"1월 임대료 미납 / 1/8 입금 확인"},{"t":"전차인 2월 임대료 미입금 / 2/3 입금 확인"},{"t":"전차인 2월 임대료 미납 / 게릴라즈에서 처리, 2/6 입금"},{"t":"전차인 2월 임대료 미납 / 2/6 입금 완료"},{"t":"3월 임대료 미납 / 카톡·문자 발송, 입금 스케줄 재조정 후 당일 입금"},{"t":"3월 임대료 미입금 / 3개월 선납으로 월 단위 변경, 메시지 발송 후 입금"},{"t":"4월 임대료 미입금 / 카톡 발송 후 입금 완료"},{"t":"4월 임대료 미입금 / 메시지 발송 후 4/6 입금 확인"},{"t":"4월 일부 미납(분납) / 4/6 입금 확인"},{"t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"t":"4월 임대료 미입금 / 카톡 발송 후 4/6 입금 확인"},{"t":"4월 임대료 미입금 / 6/8까지 임대료·관리비 일괄 입금"}],"기타":[{"t":"1년 계약 시 방학 4개월 임대료 조정 가능 여부 문의 / 재기님이 어머님께 직접 카톡 발송"},{"t":"월급일 변경으로 1월 월세 15일 입금 요청 / 1월 31일 입금 약속, 후속 팔로우"},{"t":"엔코스테이 입주자 임대료 결제 미진행 / 문자·DM·이메일 발송"},{"t":"1년 이상 연장 희망(2027-08-23) / 임대료 인상 없이 계약 유지"}],"임대료납부문의":[{"t":"ARC 발급용 임대료 납부 영수증 요청 / 1개월분 임대료 명시 영수증 제작 전달"}]},"계약관련문의":{"퇴실/만기":[{"t":"퇴실 확정 미응답 / 요청문 부착 후 12/4 연락 옴"},{"t":"퇴실 확정 미응답 / 요청문 부착, 만기 퇴실 처리"},{"t":"퇴실 확정 미응답 / 요청문 부착 후 12/4 연락 옴"},{"t":"퇴실 확정 미응답 / 도어락 요청문 부착, 당일 연락 옴"},{"t":"수납강화형 팬트리 옷걸이 떨어짐 / 비용 청구 없이 보관, 퇴실 후 벽보수"},{"t":"1/15 만기 예정인데 1/9 선퇴실 신청 / 1/9 퇴실 완료"},{"t":"퇴실 전 폐기물 처리 도움 요청 / 외국인 온라인 신청 불가, 비용 받고 처리(2만원)"},{"t":"비상조명 건전지 방전 / 손전등으로 교체 예정 (퇴실 후)"},{"t":"중도퇴실 희망, 차기 입주자 직접 구하는 중 / 차기 계약 체결"},{"t":"개인 사정으로 4월 계약 종료 문의 / 중도 퇴실 안내, 부동산 중개수수료 임차인 부담"},{"t":"5/21 조기 퇴실 + 보증금 반환 절차 문의 / 만기일 6/15 룸체크 후 반환 안내"},{"t":"중도 퇴실 의사 / 대기자 있는 경우 가능 여부 문의, 안내문 링크 전달"}],"계약연장":[{"t":"12/21 만기 → 12/22 비행기로 연장 요청 / 8시 퇴실 + 라운지 사물함 임시 사용"},{"t":"계약 연장 요청 / 그래비티 컨펌 후 전자 계약, 3/12 날인 완료"},{"t":"6/30 만기 → 7/7 단기 연장 가능 여부 문의 / 표준임대차 계약서 서명 완료"},{"t":"2026년 10월 25일까지 연장 희망 / 엔코 연장, 3/24 날인 완료"},{"t":"단기 연장 희망(6/4 → 6/17) / 3/27 계약 체결 완료"},{"t":"5월 계약 만기 연장 확인 요청서 발송 / 퇴실 결정"},{"t":"5월 계약 만기 연장 확인 요청서 발송 / 연장 결정"},{"t":"계약 연장 요청 접수 / 4/1 계약서 서명 완료"},{"t":"단기 연장 신청(6/30까지) / 그래비티 컨펌, 엔코 계약 진행"},{"t":"단기 연장 신청(7/23까지) / 계약서 작성 완료"},{"t":"8/31까지 연장 신청 + 12/20까지 장기 연장 시 할인 가능 여부 문의 / 그래비티 컨펌 완료"}],"계약서작성":[{"t":"신규 입주자 홈버튼 등록 필요 / 계약서 아카이빙 후 처리"}]}}}};
+
+// ---- RENDER DETAIL (OVERALL SUBCATEGORIES) with raw text ----
+function renderDetail() {
+  const el = document.getElementById('detail-list');
+  const overall = DATA.overall_categories;
+  const subs = DATA.overall_subcategories;
+  let html = '';
+  let rank = 1;
+  for (const [cat, cnt] of Object.entries(overall)) {
+    const color = CAT_COLORS[cat] || '#888';
+    const sub = subs[cat] || {};
+    const subKeys = Object.keys(sub);
+    const pid = `detail-sub-${rank}`;
+    let subHtml = '';
+    if (subKeys.length) {
+      const subMax = Math.max(...Object.values(sub));
+      subHtml = subKeys.map((k, ki) => {
+        const kwCnt = sub[k];
+        const kwPct = Math.round(kwCnt/cnt*100);
+        const rawItems = (VOC_RAW.overall[cat] || {})[k] || [];
+        const rawPanelId = `raw-${rank}-${ki}`;
+        const rawHtml = buildRawHtml(rawItems, rawPanelId, true);
+        return `
+          <div class="kw-row" onclick="toggleRaw('${rawPanelId}', this)">
+            <span style="font-size:11px;color:var(--text-muted);width:16px;flex-shrink:0">·</span>
+            <span class="kw-name">${k}</span>
+            <div class="kw-bar"><div class="kw-bar-fill" style="width:${Math.round(kwCnt/subMax*100)}%;background:${color}99"></div></div>
+            <span class="kw-count">${kwCnt}</span>
+            <span class="kw-pct">${kwPct}%</span>
+            <span class="kw-arrow">▶</span>
+          </div>
+          ${rawHtml}`;
+      }).join('');
+    }
+    html += `
+      <div style="margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;border-left:3px solid ${color}">
+        <div class="cat-row" style="padding:14px 20px;cursor:${subKeys.length?'pointer':'default'}" onclick="${subKeys.length?`toggleSub('${pid}', this)`:''}" >
+          <span class="cat-rank" style="width:24px;font-size:14px;font-weight:600">${rank++}</span>
+          <span class="cat-name" style="font-size:14px;font-weight:600">${cat}</span>
+          <div class="cat-mini-bar" style="width:120px;height:6px"><div class="cat-mini-fill" style="width:${Math.round(cnt/89*100)}%;background:${color}"></div></div>
+          <span class="cat-count" style="font-size:14px;font-weight:700;width:40px">${cnt}</span>
+          <span class="cat-pct" style="width:50px">${Math.round(cnt/DATA.total*100)}%</span>
+          ${subKeys.length ? '<span class="expand-icon">▶</span>' : ''}
+        </div>
+        ${subHtml ? `<div class="sub-panel" id="${pid}" style="padding:8px 16px 12px 36px">${subHtml}</div>` : ''}
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ---- RENDER 선정릉 DETAIL ----
+function renderSeonjeongneung() {
+  const el = document.getElementById('seonjeongneung-detail');
+  const bdata = DATA.branches['선정릉'];
+  const cats = bdata.categories;
+  const subs = bdata.subcategories;
+  const total = bdata.total;
+  const maxCnt = Math.max(...Object.values(cats));
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px">카테고리 분포</div>`;
+  let rank = 1;
+  for (const [cat, cnt] of Object.entries(cats)) {
+    const pct = Math.round(cnt/total*100);
+    const w = Math.round(cnt/maxCnt*100);
+    const color = CAT_COLORS[cat] || '#888';
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:100px;font-size:12px;color:var(--text-muted);text-align:right">${cat}</div>
+      <div style="flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden">
+        <div style="width:${w}%;height:100%;background:${color}30;border-left:3px solid ${color};display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:${color}">${pct}%</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;width:28px;text-align:right">${cnt}</div>
+    </div>`;
+  }
+  html += `</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px">즉시 개선 가능 VOC (추정)</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span>안면인식 등록 FAQ 자동화</span><span style="color:#06d6a0;font-weight:600">~18건 ↓</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span>관리비·임대료 납부 안내 자동화</span><span style="color:#06d6a0;font-weight:600">~22건 ↓</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span>퇴실 프로세스 안내 표준화</span><span style="color:#ffd166;font-weight:600">~9건 ↓</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0">
+          <span>계약연장 선제적 안내</span><span style="color:#ffd166;font-weight:600">~8건 ↓</span>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:rgba(6,214,160,0.08);border-radius:8px;text-align:center">
+          <span style="font-size:20px;font-weight:700;color:#06d6a0">~57건</span>
+          <span style="font-size:12px;color:var(--text-muted)"> 절감 가능 (전체 40.4%)</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+function toggleSub(pid, rowEl) {
+  const panel = document.getElementById(pid);
+  if (!panel) return;
+  panel.classList.toggle('open');
+  rowEl.classList.toggle('expanded');
+}
+
+function buildRawHtml(items, panelId, showBranch) {
+  if (!items || !items.length) return '';
+  const SHOW = 5;
+  const more = items.length > SHOW;
+  let rows = items.slice(0, SHOW).map(it => `
+    <div class="voc-raw-item">
+      ${showBranch ? `<span class="voc-branch-badge branch-badge-${it.b}">${it.b}</span>` : ''}
+      <span class="voc-text">${escHtml(it.t)}</span>
+    </div>`).join('');
+  if (more) {
+    const rest = items.slice(SHOW).map(it => `
+      <div class="voc-raw-item more-item" style="display:none">
+        ${showBranch ? `<span class="voc-branch-badge branch-badge-${it.b}">${it.b}</span>` : ''}
+        <span class="voc-text">${escHtml(it.t)}</span>
+      </div>`).join('');
+    rows += rest;
+    rows += `<button class="voc-show-more" onclick="showMore(this, event)">▼ ${items.length - SHOW}건 더 보기</button>`;
+  }
+  return `<div class="voc-raw-panel" id="${panelId}">${rows}</div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleRaw(pid, rowEl) {
+  const panel = document.getElementById(pid);
+  if (!panel) return;
+  panel.classList.toggle('open');
+  rowEl.classList.toggle('kw-expanded');
+}
+
+function showMore(btn, e) {
+  e.stopPropagation();
+  btn.parentElement.querySelectorAll('.more-item').forEach(el => el.style.display = '');
+  btn.remove();
+}
+
+// ---- RENDER 선정릉 DETAIL with raw texts ----
+function renderSeonjeongneung() {
+  const el = document.getElementById('seonjeongneung-detail');
+  const bdata = DATA.branches['선정릉'];
+  const cats = bdata.categories;
+  const subs = bdata.subcategories;
+  const total = bdata.total;
+  const maxCnt = Math.max(...Object.values(cats));
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px">카테고리 분포</div>`;
+  for (const [cat, cnt] of Object.entries(cats)) {
+    const pct = Math.round(cnt/total*100);
+    const w = Math.round(cnt/maxCnt*100);
+    const color = CAT_COLORS[cat] || '#888';
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:100px;font-size:12px;color:var(--text-muted);text-align:right">${cat}</div>
+      <div style="flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden">
+        <div style="width:${w}%;height:100%;background:${color}20;border-left:3px solid ${color};display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:${color}">${pct}%</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;width:28px;text-align:right">${cnt}</div>
+    </div>`;
+  }
+  html += `</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px">즉시 개선 가능 VOC (추정)</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.8">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>안면인식 등록 FAQ 자동화</span><span style="color:#06d6a0;font-weight:600">~18건 ↓</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>관리비·임대료 납부 안내 자동화</span><span style="color:#06d6a0;font-weight:600">~22건 ↓</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>퇴실 프로세스 안내 표준화</span><span style="color:#ffd166;font-weight:600">~9건 ↓</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0"><span>계약연장 선제적 안내</span><span style="color:#ffd166;font-weight:600">~8건 ↓</span></div>
+        <div style="margin-top:12px;padding:10px;background:rgba(6,214,160,0.08);border-radius:8px;text-align:center">
+          <span style="font-size:20px;font-weight:700;color:#06d6a0">~57건</span>
+          <span style="font-size:12px;color:var(--text-muted)"> 절감 가능 (전체 40.4%)</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  html += '<div class="section-title" style="margin-top:8px">카테고리별 하위 VOC 상세</div>';
+  let sjRank = 0;
+  for (const [cat, cnt] of Object.entries(cats)) {
+    const sub = subs[cat] || {};
+    const subKeys = Object.keys(sub).filter(k => sub[k] > 0);
+    const color = CAT_COLORS[cat] || '#888';
+    const pid = `sj-cat-${sjRank}`;
+    let subHtml = '';
+    if (subKeys.length) {
+      const subMax = Math.max(...Object.values(sub));
+      subHtml = subKeys.map((k, ki) => {
+        const kwCnt = sub[k];
+        const kwPct = Math.round(kwCnt/cnt*100);
+        const rawItems = ((VOC_RAW.branches['선정릉'] || {})[cat] || {})[k] || [];
+        const rawPanelId = `sj-raw-${sjRank}-${ki}`;
+        const rawHtml = buildRawHtml(rawItems, rawPanelId, false);
+        return `
+          <div class="kw-row" onclick="toggleRaw('${rawPanelId}', this)">
+            <span style="font-size:11px;color:var(--text-muted);width:16px;flex-shrink:0">·</span>
+            <span class="kw-name">${k}</span>
+            <div class="kw-bar"><div class="kw-bar-fill" style="width:${Math.round(kwCnt/subMax*100)}%;background:${color}99"></div></div>
+            <span class="kw-count">${kwCnt}</span>
+            <span class="kw-pct">${kwPct}%</span>
+            <span class="kw-arrow">▶</span>
+          </div>
+          ${rawHtml}`;
+      }).join('');
+    }
+    html += `
+      <div style="margin-bottom:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;border-left:4px solid ${color}">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:${subKeys.length?'pointer':'default'}" onclick="${subKeys.length?`toggleSub('${pid}', this)`:''}">
+          <span style="font-size:13px;font-weight:600;flex:1">${cat}</span>
+          <span style="font-size:12px;color:var(--text-muted)">${Math.round(cnt/total*100)}%</span>
+          <span style="font-size:14px;font-weight:700;color:${color}">${cnt}건</span>
+          ${subKeys.length ? '<span class="expand-icon">▶</span>' : ''}
+        </div>
+        ${subHtml ? `<div class="sub-panel" id="${pid}" style="padding:4px 16px 12px 24px">${subHtml}</div>` : ''}
+      </div>`;
+    sjRank++;
+  }
+  el.innerHTML = html;
+}
+
+// ---- ISSUES DATA ----
+const ISSUE_TYPES = {
+  'FM관리': { color: '#ff6b6b', bg: 'rgba(255,107,107,0.08)', badge: 'resolve-fm', icon: '🔧', desc: '시설물 고장·노후화로 인한 수리·교체 필요' },
+  '가이드 필요': { color: '#6c63ff', bg: 'rgba(108,99,255,0.08)', badge: 'resolve-guide', icon: '📋', desc: '사용 방법·규정 안내 부재로 발생하는 반복 문의' },
+  '프로세스 필요': { color: '#04a87b', bg: 'rgba(6,214,160,0.08)', badge: 'resolve-process', icon: '⚙️', desc: '반복 행정업무의 자동화·시스템화로 해소 가능' },
+  '커뮤니케이션': { color: '#c47c00', bg: 'rgba(255,166,0,0.08)', badge: 'resolve-comm', icon: '📢', desc: '입주민 간 갈등, 고지·공지 부재로 발생' },
+  '정책 수립': { color: '#0e6d8e', bg: 'rgba(17,138,178,0.08)', badge: 'resolve-policy', icon: '📌', desc: '명확한 기준·규정 부재로 매번 개별 대응' },
+};
+
+const ISSUES = [
+  // FM관리
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '냉장고·세탁기 반복 고장', detail: '세탁기 에러코드 반복, 냉장고 성에·냉기 불량. 노후 기기 일괄 점검 필요', count: 12, branches: ['선정릉','안암','아코모회기','남영'], priority: 'high' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '화장실 수전·배수 불량', detail: '샤워기 수압 약함, 변기 막힘, 세면대 배수 불량 반복 접수. 입주 전 체크리스트 강화 필요', count: 15, branches: ['선정릉','안암','아코모회기'], priority: 'high' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '전기·차단기·콘센트 불량', detail: '차단기 트립, 콘센트 불량, 조명 깜빡임. 전기 배선 노후 구간 정기점검 필요', count: 12, branches: ['선정릉','안암','남영'], priority: 'high' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '도어락 고장·배터리 방전', detail: '도어락 배터리 방전, 걸쇠 오작동, AS 반복. 정기 배터리 교체 주기 수립 필요', count: 6, branches: ['선정릉','안암'], priority: 'mid' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '보일러·온수 불량', detail: '온수 안 나옴, 보일러 동파, 난방 불량. 동절기 전 선제 점검 필요', count: 9, branches: ['선정릉','안암','아코모회기'], priority: 'high' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '누수·결로·곰팡이', detail: '창틀 누수, 하수구 역류, 결로 및 곰팡이. 방수·단열 취약 구간 정기 점검 필요', count: 9, branches: ['선정릉','안암','아코모회기','아코모가산'], priority: 'high' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '바닥재·도배 들뜸·파손', detail: '바닥재 들뜸, 도배 불량·재시공 반복. 입주 전 시공 품질 기준 강화 필요', count: 7, branches: ['안암','아코모회기'], priority: 'mid' },
+  { type: 'FM관리', category: '시설고장(전용부)', problem: '인터넷·와이파이 불량', detail: '세대 내 와이파이 끊김, 인터넷 속도 저하. 통신실 장비 노후 안내 및 업체 정기 점검 필요', count: 6, branches: ['선정릉','안암','아코모회기'], priority: 'mid' },
+  { type: 'FM관리', category: '시설고장(공용부)', problem: '공용 설비 고장(키오스크·커피머신 등)', detail: '키오스크 결제 오류, 커피머신 부품 불량, 싱크대 배관 막힘. 공용설비 정기점검 일정 수립 필요', count: 5, branches: ['선정릉','안암'], priority: 'mid' },
+
+  // 가이드 필요
+  { type: '가이드 필요', category: '생활문의', problem: '안면인식·노크타운 등록 반복 문의', detail: '입주 시 등록 절차 안내 부재로 개별 요청 지속. 입주 안내서에 등록 가이드 포함 필요', count: 18, branches: ['선정릉','남영'], priority: 'high' },
+  { type: '가이드 필요', category: '시설사용문의', problem: '가전·시설 사용법 문의(인덕션·TV·보일러 등)', detail: 'TV 사용법, 인덕션 사용법, 보일러 조작법 반복 문의. 다국어 기기 사용 가이드 필요', count: 14, branches: ['아코모회기','안암','남영'], priority: 'high' },
+  { type: '가이드 필요', category: '시설사용문의', problem: 'Wi-Fi 비밀번호·공용공간 출입번호 문의', detail: '공용부 와이파이 비밀번호, 루프탑 비밀번호 반복 문의. 입주 키트 또는 앱 내 안내로 해소 가능', count: 8, branches: ['선정릉','아코모회기'], priority: 'high' },
+  { type: '가이드 필요', category: '생활문의', problem: '분리수거·쓰레기 배출 방법 문의', detail: '분리수거 방법 및 장소 모름. 입주 안내 또는 공용부 안내판 부재', count: 4, branches: ['아코모회기','안암'], priority: 'mid' },
+  { type: '가이드 필요', category: '시설고장(전용부)', problem: '세탁기 사용법 미숙으로 인한 고장 신고', detail: '세탁기 과열 의심, 에러코드 오인. 가이드 번역 전송으로 해결. 외국인 입주자 전용 가이드 필요', count: 3, branches: ['안암'], priority: 'mid' },
+  { type: '가이드 필요', category: '생활문의', problem: '택배·우편 수령 방법 문의', detail: '무인택배함 이용 방법, 오배송 처리 등 반복 문의', count: 4, branches: ['아코모회기','안암'], priority: 'low' },
+
+  // 프로세스 필요
+  { type: '프로세스 필요', category: '임대료 및 관리비', problem: '임대료 납부 확인·가상계좌 반복 문의', detail: '납부 확인 요청, 가상계좌 정보 재요청, 이체 오류 신고가 매월 반복. 자동 납부 확인 알림 또는 입주자 포털 필요', count: 34, branches: ['선정릉','안암'], priority: 'high' },
+  { type: '프로세스 필요', category: '임대료 및 관리비', problem: '관리비 고지서 재전달 반복 요청', detail: '모바일 고지서 미수신, 재전달 요청 반복. 자동 발송 채널(카카오채널 등) 정비 필요', count: 8, branches: ['선정릉','아코모회기'], priority: 'high' },
+  { type: '프로세스 필요', category: '계약관련문의', problem: '퇴실 미확인·연락 두절 처리 반복', detail: '만기 임박 응답 없음 → 요청문 부착 → 연락 오는 패턴 반복. 사전 퇴실 의향 확인 자동 발송 프로세스 필요', count: 8, branches: ['안암'], priority: 'high' },
+  { type: '프로세스 필요', category: '계약관련문의', problem: '계약 연장 절차 문의 반복', detail: '연장 의향 확인 → 계약서 작성 → 서명 전 과정을 매번 수동 진행. 전자계약 자동화 플로우 필요', count: 14, branches: ['선정릉','안암','아코모회기'], priority: 'high' },
+  { type: '프로세스 필요', category: '생활문의', problem: '세금계산서·사업자번호 반복 요청', detail: '연말정산 시즌 사업자번호, 세금계산서 발행 요청 반복. FAQ 또는 자동 발급 안내 필요', count: 4, branches: ['선정릉','아코모회기'], priority: 'mid' },
+  { type: '프로세스 필요', category: '기타', problem: '관리비 고지서 모바일 전달 반복', detail: '동일 입주자가 매월 재요청. 수신 채널 등록 프로세스 누락으로 발생', count: 5, branches: ['아코모회기'], priority: 'mid' },
+  { type: '프로세스 필요', category: '생활문의', problem: '입주 초기 등록 업무 미비', detail: '입주 시 안면인식, 주차등록, 가스 명의, 전입신고 안내가 한 번에 이뤄지지 않아 개별 VOC로 재접수됨', count: 9, branches: ['선정릉','아코모회기','아코모가산'], priority: 'high' },
+
+  // 커뮤니케이션
+  { type: '커뮤니케이션', category: '민원 항의', problem: '층간 소음·공용공간 에티켓 민원', detail: '새벽 소음, 트레이닝룸 상의 탈의, 음식물 무단 폐기 등. 입주민 대상 생활 수칙 정기 공지 필요', count: 4, branches: ['선정릉','아코모회기','안암'], priority: 'mid' },
+  { type: '커뮤니케이션', category: '생활문의', problem: '소음 민원 처리 채널 부재', detail: '주말 소음 민원 시 관리사무소 연락처 안내만으로 처리. 야간/주말 소음 대응 채널 수립 필요', count: 4, branches: ['선정릉','아코모회기'], priority: 'mid' },
+  { type: '커뮤니케이션', category: '임대료 및 관리비', problem: '미납 입주자 반복 팔로우업', detail: '매월 동일 입주자에게 미납 독촉 카톡·문자 반복. 자동 연체 알림 + 분납 동의 프로세스 필요', count: 10, branches: ['안암'], priority: 'mid' },
+
+  // 정책 수립
+  { type: '정책 수립', category: '계약관련문의', problem: '중도퇴실·위약금 기준 불명확', detail: '중도퇴실 가능 여부, 위약금 계산 기준에 대한 문의 반복. 계약서 내 명확한 중도퇴실 조항 및 FAQ 필요', count: 7, branches: ['선정릉','아코모회기','안암'], priority: 'high' },
+  { type: '정책 수립', category: '계약관련문의', problem: '단기 연장 가능 여부·조건 불명확', detail: '1개월·2개월 단기 연장 가능 여부를 매번 개별 확인. 단기 연장 정책 표준화 필요', count: 8, branches: ['선정릉','안암'], priority: 'high' },
+  { type: '정책 수립', category: '시설사용문의', problem: '에어컨 청소 주체 불명확', detail: '에어컨 청소를 입주자가 직접 해야 하는지 문의. 관리 주체 기준 명시 필요', count: 3, branches: ['선정릉','남영'], priority: 'mid' },
+  { type: '정책 수립', category: '생활문의', problem: '방문객 주차 요금·등록 기준 불명확', detail: '방문객 주차 요금 할인 여부, 등록 방법 문의 반복. 방문객 주차 정책 명문화 필요', count: 4, branches: ['선정릉','아코모회기','아코모가산'], priority: 'mid' },
+  { type: '정책 수립', category: '생활문의', problem: '침구·옵션 제공 기준 불명확', detail: '침구 제공 여부, 편수냄비 파손 시 처리 기준 등 옵션 관련 정책 미명확화', count: 3, branches: ['아코모회기','안암'], priority: 'low' },
+];
+
+function renderIssues() {
+  const el = document.getElementById('issues-container');
+  
+  // Summary
+  const typeCounts = {};
+  for (const t of Object.keys(ISSUE_TYPES)) typeCounts[t] = 0;
+  for (const i of ISSUES) typeCounts[i.type] += i.count;
+  const total = Object.values(typeCounts).reduce((a,b)=>a+b,0);
+
+  let html = '<div class="issues-summary-grid">';
+  for (const [t, info] of Object.entries(ISSUE_TYPES)) {
+    const cnt = typeCounts[t];
+    const pct = Math.round(cnt/total*100);
+    html += `<div class="issues-summary-card" style="border-top:3px solid ${info.color}">
+      <div class="issues-summary-num" style="color:${info.color}">${cnt}</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">${info.icon} ${t}</div>
+      <div class="issues-summary-label">${pct}% · ${ISSUES.filter(i=>i.type===t).length}개 이슈</div>
+    </div>`;
+  }
+  html += '</div>';
+
+  // Per type sections
+  for (const [typeName, info] of Object.entries(ISSUE_TYPES)) {
+    const items = ISSUES.filter(i => i.type === typeName);
+    if (!items.length) continue;
+    const totalCnt = items.reduce((a,b)=>a+b.count,0);
+    const pid = `issue-body-${typeName}`;
+
+    let rows = `
+      <div class="issue-header-row">
+        <div class="issue-col-header" style="border-right:1px solid var(--border)">문제 항목</div>
+        <div class="issue-col-header" style="border-right:1px solid var(--border)">상세 내용 및 근거</div>
+        <div class="issue-col-header" style="border-right:1px solid var(--border)">건수·지점</div>
+        <div class="issue-col-header">해결 유형</div>
+      </div>`;
+
+    for (const item of items) {
+      const priorityColors = { high: '#ff6b6b', mid: '#ffd166', low: '#aaa' };
+      const priorityLabels = { high: '즉시', mid: '단기', low: '중장기' };
+      const pc = priorityColors[item.priority] || '#aaa';
+      const pl = priorityLabels[item.priority] || '';
+      rows += `<div class="issue-item">
+        <div class="issue-col" style="flex-direction:column;gap:6px;border-right:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="priority-dot" style="background:${pc}" title="${pl}"></div>
+            <span class="issue-problem">${item.problem}</span>
+          </div>
+          <span style="font-size:10px;background:${pc}20;color:${pc};border-radius:8px;padding:1px 7px;font-weight:600;width:fit-content">${pl} 개선</span>
+        </div>
+        <div class="issue-col issue-detail" style="border-right:1px solid var(--border)">${item.detail}</div>
+        <div class="issue-col" style="flex-direction:column;gap:4px;border-right:1px solid var(--border)">
+          <span class="issue-count-cell" style="font-size:16px">${item.count}건</span>
+          <div style="display:flex;flex-wrap:wrap;gap:3px">${item.branches.map(b=>`<span style="font-size:9px;padding:1px 5px;border-radius:6px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)">${b}</span>`).join('')}</div>
+        </div>
+        <div class="issue-col">
+          <span class="resolve-badge ${info.badge}">${info.icon} ${typeName}</span>
+        </div>
+      </div>`;
+    }
+
+    html += `<div class="issue-type-section">
+      <div class="issue-type-header" style="background:${info.bg};border-color:${info.color}40" onclick="toggleSub('${pid}', this)">
+        <span class="issue-type-badge ${info.badge}" style="">${info.icon} ${typeName}</span>
+        <span class="issue-type-title">${info.desc}</span>
+        <span style="font-size:12px;color:var(--text-muted)">${items.length}개 이슈</span>
+        <span class="issue-type-count" style="color:${info.color}">${totalCnt}</span>
+        <span class="expand-icon" style="margin-left:8px">▶</span>
+      </div>
+      <div class="sub-panel open issue-type-body" id="${pid}">${rows}</div>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ---- BRANCH ISSUE DATA per branch ----
+const BRANCH_ISSUES = {
+  '선정릉': {
+    color: '#6c63ff',
+    total: 141,
+    insights: [
+      { icon: '⚙️', text: '<strong>임대료·관리비 1위(25.5%)</strong> — 재분류 후 실제 최다. 가상계좌 문의·납부확인·고지서 전달이 핵심. 카카오채널 자동화로 해소 가능.' },
+      { icon: '📱', text: '<strong>안면인식·출입 등록 반복(29건)</strong> — 시설사용문의 중 가장 많음. 입주 키트에 등록 가이드 포함 시 즉시 감소 가능.' },
+      { icon: '📋', text: '<strong>5월 카카오채널 오픈</strong> 예정. 임대료·관리비·안면인식 VOC 자동 FAQ 전환 시 <strong>~50건 절감</strong> 추정.' },
+    ],
+    issues: [
+      { type: 'FM관리', problem: '냉장고·세탁기 반복 고장', detail: '냉장고 성에·물고임, 세탁기 에러코드·고장·교체 반복. 노후 기기 일괄 점검 필요', count: 7, priority: 'high' },
+      { type: 'FM관리', problem: '화장실 수전·누수', detail: '샤워기 헤드·수전 교체, 감지기 누수, 변기 막힘 반복. 입주 전 체크리스트 강화 필요', count: 6, priority: 'high' },
+      { type: 'FM관리', problem: '공용설비 고장(키오스크·커피머신)', detail: '키오스크 결제 오류, 커피머신 부품 불량, 라운지 싱크대 막힘. 정기점검 일정 수립 필요', count: 3, priority: 'mid' },
+      { type: '가이드 필요', problem: '안면인식·노크타운 등록 반복 문의', detail: '입주 시 등록 절차 안내 부재. 입주 안내서·카카오채널 봇으로 대체 가능', count: 15, priority: 'high' },
+      { type: '가이드 필요', problem: '와이파이 비밀번호·QR 출입 문의', detail: 'QR 오류, 노크타운 앱 재설치, 와이파이 비번 반복 문의. 입주 키트 1페이지로 해소 가능', count: 7, priority: 'high' },
+      { type: '가이드 필요', problem: '에어컨·시설 청소 주체 불명확', detail: '에어컨 청소 직접 해야 하는지, 셋탑박스 OTT 가능 여부 등. 관리 범위 명시 필요', count: 3, priority: 'mid' },
+      { type: '프로세스 필요', problem: '임대료·관리비 납부확인·가상계좌 반복', detail: '가상계좌 이체오류, 납부확인 요청, 고지서 재전달 매월 반복. 자동 납부 알림 시스템 필요', count: 20, priority: 'high' },
+      { type: '프로세스 필요', problem: '계약 연장 의향 확인·전자계약 수동 진행', detail: '연장 의향 → 단기 가능 여부 → 계약서 발송 → 서명 전 과정 수동. 자동화 플로우 필요', count: 11, priority: 'high' },
+      { type: '프로세스 필요', problem: '퇴실 확정·보증금 계좌 전달 반복', detail: '퇴실 확정 후 매번 보증금 계좌 전달, 퇴실 체크리스트 개별 발송. 표준 안내 자동화 필요', count: 8, priority: 'mid' },
+      { type: '커뮤니케이션', problem: '소음 민원 야간·주말 대응 채널 부재', detail: '주말 소음 민원 시 관리사무소 연락처만 안내. 야간 대응 채널 및 공지 프로세스 수립 필요', count: 2, priority: 'mid' },
+      { type: '정책 수립', problem: '단기 연장 조건·가능 여부 불명확', detail: '1개월·2개월 단기 연장 가능 여부를 매번 개별 확인. 단기 연장 정책 표준화 필요', count: 6, priority: 'high' },
+      { type: '정책 수립', problem: '방문객 주차 요금·등록 기준 불명확', detail: '방문객 주차 등록 방법, 요금 문의 반복. 방문객 주차 정책 명문화 필요', count: 3, priority: 'mid' },
+    ]
+  },
+  '안암': {
+    color: '#ff9a3c',
+    total: 115,
+    insights: [
+      { icon: '🔧', text: '<strong>시설고장(전용부) 1위(43.5%)</strong> — 화장실·전기·보일러 반복. 입주 전 체크리스트 강화 및 정기 점검 도입 필요.' },
+      { icon: '📋', text: '<strong>퇴실 미응답 반복 패턴</strong> — 요청문 부착 후 연락 오는 패턴 4건. 만기 D-60 자동 안내 발송으로 선제 대응 가능.' },
+      { icon: '💸', text: '<strong>임대료 미납 독촉 18건</strong> — 매월 동일 세대 반복 팔로우업. 자동 연체 알림 + 분납 동의 프로세스 구축 필요.' },
+    ],
+    issues: [
+      { type: 'FM관리', problem: '화장실 수전·변기·배수 불량 반복', detail: '변기 막힘, 세면대 배수 불량, 수전 손잡이 빠짐 등 반복. 입주 체크리스트 시공 품질 기준 강화 필요', count: 11, priority: 'high' },
+      { type: 'FM관리', problem: '전기·차단기·조명 불량', detail: '차단기 트립, 콘센트 불량, 조명 깜빡임·교체 반복. 전기 배선 노후 정기점검 필요', count: 8, priority: 'high' },
+      { type: 'FM관리', problem: '도어락 오작동·걸쇠 불량', detail: '도어락 걸쇠 어긋남, 배터리 방전, 비번 오류 반복. 정기 배터리 교체 주기 수립 필요', count: 4, priority: 'mid' },
+      { type: 'FM관리', problem: '보일러·온수 불량', detail: '온수 앵글밸브 잠김, 보일러 미작동, 온수 수압 약함. 입주 초기 점검 항목 추가 필요', count: 6, priority: 'high' },
+      { type: 'FM관리', problem: '인터넷·와이파이 속도·끊김', detail: '통신실 장비 노후로 반복 끊김. 업체 정기 점검 계약 및 장비 교체 계획 필요', count: 4, priority: 'mid' },
+      { type: 'FM관리', problem: '공용부 누수(창틀·외벽)', detail: '창틀 코킹 불량, 외벽 방수 후속 작업 필요. 우기 전 선제 방수 점검 필요', count: 2, priority: 'high' },
+      { type: '가이드 필요', problem: '가전 사용법 미숙으로 인한 오신고', detail: '인덕션 E6 에러, 세탁기 과열 의심, TV HDMI 오류 등 사용법 미숙으로 AS 오접수. 다국어 가이드 필요', count: 8, priority: 'high' },
+      { type: '프로세스 필요', problem: '임대료 미납 독촉 수동 반복', detail: '매월 동일 세대 카톡·문자·DM 수동 발송. 자동 연체 알림 + 분납 동의 프로세스 필요', count: 18, priority: 'high' },
+      { type: '프로세스 필요', problem: '퇴실 미확인·요청문 부착 반복', detail: '만기 임박 연락 두절 → 요청문 부착 → 연락 오는 패턴 4건 반복. D-60 자동 안내 발송 필요', count: 4, priority: 'high' },
+      { type: '프로세스 필요', problem: '계약 연장 수동 플로우 반복', detail: '연장 확인 요청서 발송 → 컨펌 → 전자계약 전 과정 수동. 자동화 플로우 필요', count: 12, priority: 'high' },
+      { type: '정책 수립', problem: '중도퇴실·위약금 기준 불명확', detail: '중도퇴실 가능 여부, 위약금 산정 기준 매번 개별 안내. 계약서 조항 명확화 필요', count: 5, priority: 'high' },
+    ]
+  },
+  '아코모회기': {
+    color: '#ff6b6b',
+    total: 65,
+    insights: [
+      { icon: '📱', text: '<strong>시설사용문의 1위(29.2%)</strong> — TV·인덕션·보일러 사용법, 와이파이·분리수거 문의. 입주 키트 정비로 대부분 해소 가능.' },
+      { icon: '💰', text: '<strong>임대료·관리비(26.2%)</strong> — 원본은 기타로 분류되어 있던 것이 재분류됨. 고지서 모바일 전달 반복이 핵심 이슈.' },
+      { icon: '🌍', text: '<strong>외국인 입주자 비중 높음</strong> — 해외에서 관리비 고지서 요청, 보일러·가전 사용법 문의 다수. 다국어 입주 안내 필요.' },
+    ],
+    issues: [
+      { type: '가이드 필요', problem: 'TV·인덕션·보일러 등 가전 사용법 반복 문의', detail: '입주 시 기기 사용법 안내 없음. 다국어(한/영) 기기 가이드 제작 필요', count: 6, priority: 'high' },
+      { type: '가이드 필요', problem: 'Wi-Fi·공용공간 비밀번호 반복 문의', detail: '공용부 와이파이 비번, 루프탑·공용화장실 비밀번호 반복 문의. 입주 키트 또는 카드 제공 필요', count: 4, priority: 'high' },
+      { type: '가이드 필요', problem: '분리수거·쓰레기 배출 방법 문의', detail: '분리수거 장소 및 방법 모름. 공용부 안내판 또는 입주 안내서 보완 필요', count: 2, priority: 'mid' },
+      { type: '프로세스 필요', problem: '관리비 고지서 모바일 전달 반복 요청', detail: '동일 입주자 매월 고지서 재전달 요청. 입주 시 수신 채널 등록 프로세스 미흡', count: 5, priority: 'high' },
+      { type: '프로세스 필요', problem: '임대료·입금 확인 반복 문의', detail: '납부 후 매번 입금 확인 요청. 자동 납부 확인 알림 또는 입주자 포털 필요', count: 8, priority: 'high' },
+      { type: 'FM관리', problem: '세탁기 누수·보일러 동파', detail: '세탁기 배수 누수, 보일러 동파 수리 요청. 동절기 전 설비 점검 필요', count: 2, priority: 'mid' },
+      { type: '커뮤니케이션', problem: '소음 민원 대응 채널 부재', detail: '새벽 층간소음 민원 발생 시 대응 방법 불명확. 야간 소음 민원 처리 채널 수립 필요', count: 2, priority: 'mid' },
+      { type: '정책 수립', problem: '중도퇴실·위약금 기준 불명확', detail: '위약금 없는 퇴실 가능 날짜, 중도 해지 가능 여부 반복 문의. 조항 명확화 필요', count: 3, priority: 'high' },
+      { type: '정책 수립', problem: '침구·옵션 제공 기준 불명확', detail: '침구 제공 여부, 비데 설치 가능 여부 등 옵션 정책 미명확화', count: 2, priority: 'low' },
+    ]
+  },
+  '남영': {
+    color: '#d4a017',
+    total: 11,
+    insights: [
+      { icon: '📊', text: '<strong>VOC 건수 적음(11건)</strong> — 규모가 작거나 수집 체계 미흡일 수 있음. 카카오채널 등 VOC 수집 채널 정비 필요.' },
+      { icon: '🔧', text: '<strong>시설고장 36.4%</strong> — 싱크대 누수, 콘센트 수리, 냉장고 냉기 불량. 소규모지만 FM 이슈 비율 높음.' },
+      { icon: '📋', text: '<strong>입주 안내 부재</strong> — 에어컨 청소 주체 문의, 출입 방법 문의 등 기본 안내 부재 이슈 존재.' },
+    ],
+    issues: [
+      { type: 'FM관리', problem: '싱크대 누수·냉장고 냉기 불량', detail: '싱크대 누수 2건, 냉장고 냉장실 냉기 약함. 소규모 지점이나 FM 점검 체계 수립 필요', count: 3, priority: 'mid' },
+      { type: '가이드 필요', problem: '에어컨 청소 주체 불명확', detail: '에어컨 청소를 입주자가 직접 해야 하는지 문의. 관리 범위 명시 안내 필요', count: 1, priority: 'mid' },
+      { type: '가이드 필요', problem: '출입 방법·주차 등록 문의', detail: '1층 공용부 출입 방법, 주차 등록 방법 문의. 입주 안내서 보완 필요', count: 2, priority: 'mid' },
+      { type: '프로세스 필요', problem: 'VOC 수집 체계 미비', detail: 'VOC 건수가 타 지점 대비 현저히 낮음. 실제 발생 VOC 미집계 가능성. 카카오채널 등 수집 채널 도입 필요', count: 0, priority: 'high' },
+    ]
+  },
+  '아코모가산': {
+    color: '#06d6a0',
+    total: 6,
+    insights: [
+      { icon: '⚠️', text: '<strong>VOC 6건으로 최소</strong> — 수집 체계 부재 가능성 높음. 실제 불만은 더 많을 수 있음.' },
+      { icon: '🏢', text: '<strong>결로·곰팡이 이슈</strong> — 입주자가 호실 이전 거부하고 거주 지속. 장기적 시설 관리 리스크 존재.' },
+      { icon: '🚗', text: '<strong>기계식 주차장 안내 부재</strong> — 방문객 주차·흡연 관련 안내문자 발송 이슈. 입주 초기 안내 강화 필요.' },
+    ],
+    issues: [
+      { type: 'FM관리', problem: '세대 결로·곰팡이 방치', detail: '결로 심화 및 곰팡이 발생 → 호실 이전 안내 → 입주자 거부로 방치. 장기 방치 시 건물 손상 위험', count: 1, priority: 'high' },
+      { type: '가이드 필요', problem: '기계식 주차장 이용·흡연 구역 안내 부재', detail: '방문객 기계식 주차 사용 방법 및 흡연 구역 안내 미비. 입주 초기 안내 강화 필요', count: 2, priority: 'mid' },
+      { type: '프로세스 필요', problem: 'VOC 수집 채널 미비', detail: '전체 6건으로 실제 VOC 미수집 가능성. 카카오채널 등 수집 채널 도입 시급', count: 0, priority: 'high' },
+      { type: '정책 수립', problem: '관리비 산정 방식 불투명', detail: '관리비 금액에 의문 제기 → 전기·수도 검침 방식 설명 필요. 고지서에 산정 근거 명시 필요', count: 1, priority: 'mid' },
+    ]
+  }
+};
+
+const BRANCH_TAB_MAP = {
+  'seonjeongneung': '선정릉',
+  'anam': '안암',
+  'hoegi': '아코모회기',
+  'namyeong': '남영',
+  'gasan': '아코모가산',
+};
+
+function renderBranchPage(tabId) {
+  const branchName = BRANCH_TAB_MAP[tabId];
+  const el = document.getElementById(`branch-page-${tabId}`);
+  if (!el || el.innerHTML) return;
+
+  const bdata = BRANCH_ISSUES[branchName];
+  const bcolor = bdata.color;
+  const bvoc = DATA.branches[branchName] || {};
+  const bcats = bvoc.categories || {};
+  const total = bdata.total;
+  const maxCnt = bcats && Object.values(bcats).length ? Math.max(...Object.values(bcats)) : 1;
+
+  // Insight box
+  let html = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <div style="width:12px;height:32px;background:${bcolor};border-radius:4px"></div>
+    <div>
+      <div style="font-size:20px;font-weight:700">${branchName} 지점 분석</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-top:2px">총 ${total}건 · 재분류 기준</div>
+    </div>
+  </div>`;
+
+  html += `<div class="insight-box" style="border-color:${bcolor}40;background:${bcolor}08;margin-bottom:28px">
+    <div class="insight-label" style="color:${bcolor}">📌 지점 특이점</div>
+    <div class="insight-row">
+      ${bdata.insights.map(i => `<div class="insight-item"><div class="insight-icon">${i.icon}</div><div class="insight-text">${i.text}</div></div>`).join('')}
+    </div>
+  </div>`;
+
+  // Category bar
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+    <div class="section-title" style="font-size:14px;margin-bottom:16px">카테고리 분포</div>`;
+  for (const [cat, cnt] of Object.entries(bcats)) {
+    const pct = Math.round(cnt/total*100);
+    const w = Math.round(cnt/maxCnt*100);
+    const color = CAT_COLORS[cat] || '#888';
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:110px;font-size:11px;color:var(--text-muted);text-align:right;flex-shrink:0">${cat}</div>
+      <div style="flex:1;height:20px;background:var(--surface2);border-radius:4px;overflow:hidden">
+        <div style="width:${w}%;height:100%;background:${color}25;border-left:3px solid ${color};display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:600;color:${color}">${pct}%</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;width:24px;text-align:right;flex-shrink:0">${cnt}</div>
+    </div>`;
+  }
+
+  // Issue type mini summary
+  const issueTypeCounts = {};
+  for (const i of bdata.issues) {
+    if (!issueTypeCounts[i.type]) issueTypeCounts[i.type] = 0;
+    issueTypeCounts[i.type] += (i.count || 0);
+  }
+  html += `</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+    <div class="section-title" style="font-size:14px;margin-bottom:16px">이슈 유형 요약</div>`;
+  for (const [typeName, info] of Object.entries(ISSUE_TYPES)) {
+    const cnt = issueTypeCounts[typeName] || 0;
+    const items = bdata.issues.filter(i => i.type === typeName).length;
+    if (!items) continue;
+    html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span class="resolve-badge ${info.badge}" style="width:90px;justify-content:center">${info.icon} ${typeName}</span>
+      <div style="flex:1;height:16px;background:var(--surface2);border-radius:3px;overflow:hidden">
+        <div style="width:${Math.min(100,Math.round(cnt/total*100)*3)}%;height:100%;background:${info.color}40;border-radius:3px"></div>
+      </div>
+      <span style="font-size:11px;color:var(--text-muted);width:36px;text-align:right">${items}개 이슈</span>
+    </div>`;
+  }
+  html += `</div></div>`;
+
+  // VOC detail (category → keyword → raw)
+  html += `<div class="section-title" style="margin-bottom:16px">카테고리별 VOC 상세</div>`;
+  const branchVocData = VOC_RAW.branches[branchName] || {};
+  let catRank = 0;
+  for (const [cat, cnt] of Object.entries(bcats)) {
+    const color = CAT_COLORS[cat] || '#888';
+    const kws = branchVocData[cat] || {};
+    const pid = `bp-${tabId}-cat-${catRank}`;
+    let subHtml = '';
+    const kwEntries = Object.entries(kws);
+    if (kwEntries.length) {
+      const kwMax = Math.max(...kwEntries.map(([,items])=>items.length));
+      subHtml = kwEntries.map(([kw, items], ki) => {
+        const rawPid = `bp-${tabId}-raw-${catRank}-${ki}`;
+        const rawHtml = buildRawHtml(items, rawPid, false);
+        return `
+          <div class="kw-row" onclick="toggleRaw('${rawPid}', this)">
+            <span style="font-size:11px;color:var(--text-muted);width:16px;flex-shrink:0">·</span>
+            <span class="kw-name">${kw}</span>
+            <div class="kw-bar"><div class="kw-bar-fill" style="width:${Math.round(items.length/kwMax*100)}%;background:${color}99"></div></div>
+            <span class="kw-count">${items.length}</span>
+            <span class="kw-pct">${Math.round(items.length/cnt*100)}%</span>
+            <span class="kw-arrow">▶</span>
+          </div>${rawHtml}`;
+      }).join('');
+    }
+    html += `<div style="margin-bottom:10px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;border-left:4px solid ${color}">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:${kwEntries.length?'pointer':'default'}" onclick="${kwEntries.length?`toggleSub('${pid}',this)`:''}">
+        <span style="font-size:13px;font-weight:600;flex:1">${cat}</span>
+        <span style="font-size:12px;color:var(--text-muted)">${Math.round(cnt/total*100)}%</span>
+        <span style="font-size:14px;font-weight:700;color:${color}">${cnt}건</span>
+        ${kwEntries.length ? '<span class="expand-icon">▶</span>' : ''}
+      </div>
+      ${subHtml ? `<div class="sub-panel" id="${pid}" style="padding:4px 16px 12px 24px">${subHtml}</div>` : ''}
+    </div>`;
+    catRank++;
+  }
+
+  // Branch issue analysis
+  html += `<div class="section-title" style="margin-top:32px;margin-bottom:16px">이슈 유형 분석</div>`;
+  for (const [typeName, info] of Object.entries(ISSUE_TYPES)) {
+    const items = bdata.issues.filter(i => i.type === typeName);
+    if (!items.length) continue;
+    const pid = `bp-${tabId}-issue-${typeName}`;
+    let rows = `<div class="issue-header-row">
+      <div class="issue-col-header" style="border-right:1px solid var(--border)">문제 항목</div>
+      <div class="issue-col-header" style="border-right:1px solid var(--border)">상세 내용 및 근거</div>
+      <div class="issue-col-header" style="border-right:1px solid var(--border)">건수</div>
+      <div class="issue-col-header">해결 유형</div>
+    </div>`;
+    for (const item of items) {
+      const pc = {high:'#ff6b6b',mid:'#ffd166',low:'#aaa'}[item.priority];
+      const pl = {high:'즉시',mid:'단기',low:'중장기'}[item.priority];
+      rows += `<div class="issue-item">
+        <div class="issue-col" style="flex-direction:column;gap:6px;border-right:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="priority-dot" style="background:${pc}"></div>
+            <span class="issue-problem">${item.problem}</span>
+          </div>
+          <span style="font-size:10px;background:${pc}20;color:${pc};border-radius:8px;padding:1px 7px;font-weight:600;width:fit-content">${pl} 개선</span>
+        </div>
+        <div class="issue-col issue-detail" style="border-right:1px solid var(--border)">${item.detail}</div>
+        <div class="issue-col" style="border-right:1px solid var(--border)">
+          <span class="issue-count-cell" style="font-size:16px">${item.count > 0 ? item.count+'건' : '—'}</span>
+        </div>
+        <div class="issue-col"><span class="resolve-badge ${info.badge}">${info.icon} ${typeName}</span></div>
+      </div>`;
+    }
+    html += `<div class="issue-type-section">
+      <div class="issue-type-header" style="background:${info.bg};border-color:${info.color}40" onclick="toggleSub('${pid}',this)">
+        <span class="issue-type-badge ${info.badge}">${info.icon} ${typeName}</span>
+        <span class="issue-type-title">${info.desc}</span>
+        <span style="font-size:12px;color:var(--text-muted)">${items.length}개 이슈</span>
+        <span class="expand-icon" style="margin-left:8px">▶</span>
+      </div>
+      <div class="sub-panel open issue-type-body" id="${pid}">${rows}</div>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════
+// 우선순위 설정 모듈
+// ════════════════════════════════════════
+const PRI_BRANCHES = ["선정릉","안암","아코모회기","남영","아코모가산"];
+const PRI_BC = {선정릉:"#6c63ff",안암:"#d4700a",아코모회기:"#cc3333",남영:"#a07010",아코모가산:"#028a65"};
+const PRI_BG = {선정릉:"#f0effe",안암:"#fff4eb",아코모회기:"#fff0f0",남영:"#fdf8ec",아코모가산:"#edfaf5"};
+const PRI_IT = {
+  "FM관리":       {icon:"🔧",col:"#a32d2d",bg:"rgba(220,50,50,0.1)"},
+  "가이드 필요":  {icon:"📋",col:"#185fa5",bg:"rgba(24,95,165,0.1)"},
+  "프로세스 필요":{icon:"⚙️",col:"#0f6e56",bg:"rgba(15,110,86,0.1)"},
+  "커뮤니케이션": {icon:"📢",col:"#854f0b",bg:"rgba(133,79,11,0.1)"},
+  "정책 수립":    {icon:"📌",col:"#3c3489",bg:"rgba(60,52,137,0.1)"},
+};
+const PRI_PC = {
+  즉시해결:  {col:"#a32d2d",bg:"#fff0f0",brd:"#f09595",label:"즉시해결",short:"즉시"},
+  단기개선:  {col:"#854f0b",bg:"#fffaf0",brd:"#fac775",label:"단기개선",short:"단기"},
+  중장기검토:{col:"#185fa5",bg:"#ebf8ff",brd:"#85b7eb",label:"중장기",  short:"중장기"},
+  보류:      {col:"#5f5e5a",bg:"#f5f5f5",brd:"#b4b2a9",label:"보류",    short:"보류"},
+  미설정:    {col:"#aaa",   bg:"#f7f7f7",brd:"#e2e8f0",label:"미설정",  short:"—"},
+};
+const PRI_ISSUES = {
+  선정릉:[
+    {id:"sj-1",type:"FM관리",problem:"냉장고·세탁기 반복 고장",detail:"냉장고 성에·물고임, 세탁기 에러코드·고장·교체 반복. 노후 기기 일괄 점검 필요",count:7},
+    {id:"sj-2",type:"FM관리",problem:"화장실 수전·누수",detail:"샤워기 헤드·수전 교체, 감지기 누수, 변기 막힘 반복. 입주 전 체크리스트 강화 필요",count:6},
+    {id:"sj-3",type:"FM관리",problem:"공용설비 고장 (키오스크·커피머신)",detail:"키오스크 결제 오류, 커피머신 부품 불량, 라운지 싱크대 막힘. 정기점검 일정 수립 필요",count:3},
+    {id:"sj-4",type:"가이드 필요",problem:"안면인식·노크타운 등록 반복 문의",detail:"입주 시 등록 절차 안내 부재. 입주 안내서·카카오채널 봇으로 대체 가능",count:15},
+    {id:"sj-5",type:"가이드 필요",problem:"와이파이 비밀번호·QR 출입 문의",detail:"QR 오류, 노크타운 앱 재설치, 와이파이 비번 반복 문의. 입주 키트 1페이지로 해소 가능",count:7},
+    {id:"sj-6",type:"가이드 필요",problem:"에어컨·시설 청소 주체 불명확",detail:"에어컨 청소 직접 해야 하는지, 셋탑박스 OTT 가능 여부 등. 관리 범위 명시 필요",count:3},
+    {id:"sj-7",type:"프로세스 필요",problem:"임대료·관리비 납부확인·가상계좌 반복",detail:"가상계좌 이체오류, 납부확인 요청, 고지서 재전달 매월 반복. 자동 납부 알림 시스템 필요",count:20},
+    {id:"sj-8",type:"프로세스 필요",problem:"계약 연장·전자계약 수동 진행",detail:"연장 의향→단기 가능 여부→계약서 발송→서명 전 과정 수동. 자동화 플로우 필요",count:11},
+    {id:"sj-9",type:"프로세스 필요",problem:"퇴실 확정·보증금 계좌 전달 반복",detail:"퇴실 확정 후 매번 보증금 계좌 전달, 퇴실 체크리스트 개별 발송. 표준 안내 자동화 필요",count:8},
+    {id:"sj-10",type:"커뮤니케이션",problem:"소음 민원 야간·주말 대응 채널 부재",detail:"주말 소음 민원 시 관리사무소 연락처만 안내. 야간 대응 채널 및 공지 프로세스 수립 필요",count:2},
+    {id:"sj-11",type:"정책 수립",problem:"단기 연장 조건·가능 여부 불명확",detail:"1개월·2개월 단기 연장 가능 여부를 매번 개별 확인. 단기 연장 정책 표준화 필요",count:6},
+    {id:"sj-12",type:"정책 수립",problem:"방문객 주차 요금·등록 기준 불명확",detail:"방문객 주차 등록 방법, 요금 문의 반복. 방문객 주차 정책 명문화 필요",count:3},
+  ],
+  안암:[
+    {id:"an-1",type:"FM관리",problem:"화장실 수전·변기·배수 불량 반복",detail:"변기 막힘, 세면대 배수 불량, 수전 손잡이 빠짐 등 반복. 시공 품질 기준 강화 필요",count:11},
+    {id:"an-2",type:"FM관리",problem:"전기·차단기·조명 불량",detail:"차단기 트립, 콘센트 불량, 조명 깜빡임·교체 반복. 전기 배선 노후 정기점검 필요",count:8},
+    {id:"an-3",type:"FM관리",problem:"도어락 오작동·걸쇠 불량",detail:"도어락 걸쇠 어긋남, 배터리 방전, 비번 오류 반복. 정기 배터리 교체 주기 수립 필요",count:4},
+    {id:"an-4",type:"FM관리",problem:"보일러·온수 불량",detail:"온수 앵글밸브 잠김, 보일러 미작동, 온수 수압 약함. 입주 초기 점검 항목 추가 필요",count:6},
+    {id:"an-5",type:"FM관리",problem:"인터넷·와이파이 속도·끊김",detail:"통신실 장비 노후로 반복 끊김. 업체 정기 점검 계약 및 장비 교체 계획 필요",count:4},
+    {id:"an-6",type:"FM관리",problem:"공용부 누수 (창틀·외벽)",detail:"창틀 코킹 불량, 외벽 방수 후속 작업 필요. 우기 전 선제 방수 점검 필요",count:2},
+    {id:"an-7",type:"가이드 필요",problem:"가전 사용법 미숙으로 인한 오신고",detail:"인덕션 E6 에러, 세탁기 과열 의심, TV HDMI 오류 등. 다국어 가이드 필요",count:8},
+    {id:"an-8",type:"프로세스 필요",problem:"임대료 미납 독촉 수동 반복",detail:"매월 동일 세대 카톡·문자·DM 수동 발송. 자동 연체 알림 + 분납 동의 프로세스 필요",count:18},
+    {id:"an-9",type:"프로세스 필요",problem:"퇴실 미확인·요청문 부착 반복",detail:"만기 임박 연락 두절→요청문 부착→연락 패턴 반복. D-60 자동 안내 발송 필요",count:4},
+    {id:"an-10",type:"프로세스 필요",problem:"계약 연장 수동 플로우 반복",detail:"연장 확인 요청서→컨펌→전자계약 전 과정 수동. 자동화 플로우 필요",count:12},
+    {id:"an-11",type:"정책 수립",problem:"중도퇴실·위약금 기준 불명확",detail:"중도퇴실 가능 여부, 위약금 산정 기준 매번 개별 안내. 계약서 조항 명확화 필요",count:5},
+  ],
+  아코모회기:[
+    {id:"hg-1",type:"가이드 필요",problem:"가전 사용법 반복 문의 (TV·인덕션·보일러)",detail:"입주 시 기기 사용법 안내 없음. 다국어(한/영) 기기 가이드 제작 필요",count:6},
+    {id:"hg-2",type:"가이드 필요",problem:"Wi-Fi·공용공간 비밀번호 반복 문의",detail:"공용부 와이파이 비번, 루프탑·공용화장실 비밀번호 반복 문의. 입주 키트 또는 카드 제공 필요",count:4},
+    {id:"hg-3",type:"가이드 필요",problem:"분리수거·쓰레기 배출 방법 문의",detail:"분리수거 장소 및 방법 모름. 공용부 안내판 또는 입주 안내서 보완 필요",count:2},
+    {id:"hg-4",type:"프로세스 필요",problem:"관리비 고지서 모바일 전달 반복 요청",detail:"동일 입주자 매월 고지서 재전달 요청. 입주 시 수신 채널 등록 프로세스 미흡",count:5},
+    {id:"hg-5",type:"프로세스 필요",problem:"임대료·입금 확인 반복 문의",detail:"납부 후 매번 입금 확인 요청. 자동 납부 확인 알림 또는 입주자 포털 필요",count:8},
+    {id:"hg-6",type:"FM관리",problem:"세탁기 누수·보일러 동파",detail:"세탁기 배수 누수, 보일러 동파 수리 요청. 동절기 전 설비 점검 필요",count:2},
+    {id:"hg-7",type:"커뮤니케이션",problem:"소음 민원 대응 채널 부재",detail:"새벽 층간소음 민원 발생 시 대응 방법 불명확. 야간 소음 민원 처리 채널 수립 필요",count:2},
+    {id:"hg-8",type:"정책 수립",problem:"중도퇴실·위약금 기준 불명확",detail:"위약금 없는 퇴실 가능 날짜, 중도 해지 가능 여부 반복 문의. 조항 명확화 필요",count:3},
+    {id:"hg-9",type:"정책 수립",problem:"침구·옵션 제공 기준 불명확",detail:"침구 제공 여부, 비데 설치 가능 여부 등 옵션 정책 미명확화",count:2},
+  ],
+  남영:[
+    {id:"ny-1",type:"FM관리",problem:"싱크대 누수·냉장고 냉기 불량",detail:"싱크대 누수 2건, 냉장고 냉장실 냉기 약함. 소규모 지점이나 FM 점검 체계 수립 필요",count:3},
+    {id:"ny-2",type:"가이드 필요",problem:"에어컨 청소 주체 불명확",detail:"에어컨 청소를 입주자가 직접 해야 하는지 문의. 관리 범위 명시 안내 필요",count:1},
+    {id:"ny-3",type:"가이드 필요",problem:"출입 방법·주차 등록 문의",detail:"1층 공용부 출입 방법, 주차 등록 방법 문의. 입주 안내서 보완 필요",count:2},
+    {id:"ny-4",type:"프로세스 필요",problem:"VOC 수집 체계 미비",detail:"VOC 건수가 타 지점 대비 현저히 낮음. 카카오채널 등 수집 채널 도입 필요",count:0},
+  ],
+  아코모가산:[
+    {id:"gs-1",type:"FM관리",problem:"세대 결로·곰팡이 방치",detail:"결로 심화 및 곰팡이 발생→호실 이전 안내→입주자 거부로 방치. 장기 방치 시 건물 손상 위험",count:1},
+    {id:"gs-2",type:"가이드 필요",problem:"기계식 주차장·흡연 구역 안내 부재",detail:"방문객 기계식 주차 사용 방법 및 흡연 구역 안내 미비. 입주 초기 안내 강화 필요",count:2},
+    {id:"gs-3",type:"프로세스 필요",problem:"VOC 수집 채널 미비",detail:"전체 6건으로 실제 VOC 미수집 가능성. 카카오채널 등 수집 채널 도입 시급",count:0},
+    {id:"gs-4",type:"정책 수립",problem:"관리비 산정 방식 불투명",detail:"관리비 금액에 의문 제기→전기·수도 검침 방식 설명 필요. 고지서에 산정 근거 명시 필요",count:1},
+  ],
+};
+
+// ── 우선순위 상태 ─────────────────────────────────────────
+let PRI_STATE = {
+  userName: '',
+  priorities: {},   // { issueId: { p, memo, by, at } }
+  selBranch: '선정릉',
+  filterType: '전체',
+  filterPri: '전체',
+  expanded: null,
+  showDash: false,
+};
+
+async function priLoad() {
+  try {
+    const r = await window.storage.get('holmes_voc_pri_v1', true);
+    return r ? JSON.parse(r.value) : {};
+  } catch { return {}; }
+}
+async function priSave(p) {
+  try { await window.storage.set('holmes_voc_pri_v1', JSON.stringify(p), true); } catch {}
+}
+
+function priBranchSet(b) {
+  return (PRI_ISSUES[b]||[]).filter(i => PRI_STATE.priorities[i.id]?.p && PRI_STATE.priorities[i.id].p !== '미설정').length;
+}
+function priBranchPct(b) {
+  const t = (PRI_ISSUES[b]||[]).length;
+  return t ? Math.round(priBranchSet(b)/t*100) : 0;
+}
+function priAllFlat() {
+  return PRI_BRANCHES.flatMap(b => (PRI_ISSUES[b]||[]).map(i => ({...i, branch:b})));
+}
+
+function priSetPriority(id, p, memo) {
+  const now = new Date().toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  PRI_STATE.priorities[id] = { p, memo: memo||'', by: PRI_STATE.userName, at: now };
+  priSave(PRI_STATE.priorities);
+  // flash save msg
+  const msg = document.getElementById('pri-save-msg');
+  if (msg) { msg.style.opacity='1'; msg.textContent='저장됨'; setTimeout(()=>msg.style.opacity='0',1800); }
+  priRenderIssues();
+  priRenderBranchTabs();
+}
+
+async function priStart() {
+  const inp = document.getElementById('pri-name-input');
+  const name = inp ? inp.value.trim() : '';
+  if (!name) return;
+  PRI_STATE.userName = name;
+  PRI_STATE.priorities = await priLoad();
+  document.getElementById('pri-name-screen').style.display = 'none';
+  document.getElementById('pri-main').style.display = 'block';
+  document.getElementById('pri-user-badge').textContent = '👤 ' + name;
+  priRenderBranchTabs();
+  priRenderIssues();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('pri-name-input');
+  if (inp) {
+    inp.addEventListener('keydown', e => { if (e.key==='Enter') priStart(); });
+  }
+});
+
+function priShowDash() {
+  PRI_STATE.showDash = !PRI_STATE.showDash;
+  const issueList = document.getElementById('pri-issue-list');
+  const dash = document.getElementById('pri-dashboard');
+  const btn = document.getElementById('pri-dash-btn');
+  const tabs = document.getElementById('pri-branch-tabs');
+  if (PRI_STATE.showDash) {
+    issueList.style.display = 'none';
+    tabs.style.display = 'none';
+    dash.style.display = 'block';
+    btn.textContent = '← 지점 설정';
+    priRenderDash();
+  } else {
+    issueList.style.display = 'block';
+    tabs.style.display = 'flex';
+    dash.style.display = 'none';
+    btn.textContent = '📊 전체 현황';
+  }
+}
+
+function priRenderBranchTabs() {
+  const el = document.getElementById('pri-branch-tabs');
+  if (!el) return;
+  el.innerHTML = PRI_BRANCHES.map(b => {
+    const p = priBranchPct(b); const active = b === PRI_STATE.selBranch;
+    const col = PRI_BC[b]; const bg = PRI_BG[b];
+    return `<button class="pri-branch-tab${active?' active':''}"
+      style="border-color:${active?col:'var(--border)'};background:${active?bg:'#fff'};color:${active?col:'var(--text)'}"
+      onclick="priSelectBranch('${b}')">
+      ${b}<span class="pri-pct-chip${p===100?' done':''}">${p}%</span>
+    </button>`;
+  }).join('');
+}
+
+function priSelectBranch(b) {
+  PRI_STATE.selBranch = b;
+  PRI_STATE.filterType = '전체';
+  PRI_STATE.expanded = null;
+  priRenderBranchTabs();
+  priRenderIssues();
+}
+
+function priRenderIssues() {
+  const el = document.getElementById('pri-issue-list');
+  if (!el) return;
+  const b = PRI_STATE.selBranch;
+  const issues = PRI_ISSUES[b] || [];
+  const col = PRI_BC[b];
+  const set = priBranchSet(b);
+  const p = priBranchPct(b);
+
+  const types = ['전체', ...Object.keys(PRI_IT)];
+  const filtered = PRI_STATE.filterType === '전체' ? issues : issues.filter(i => i.type === PRI_STATE.filterType);
+
+  // branch header
+  let html = `<div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px">
+    <div style="width:4px;height:36px;border-radius:2px;background:${col};flex-shrink:0"></div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:15px">${b} 이슈 목록</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px">총 ${issues.length}개 이슈 · ${set}개 설정 완료</div>
+    </div>
+    <div style="font-size:22px;font-weight:700;color:${col}">${p}%</div>
+    <div style="width:64px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden">
+      <div style="width:${p}%;height:100%;background:${col};border-radius:3px;transition:width .3s"></div>
+    </div>
+  </div>`;
+
+  // filter row
+  html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+    ${types.map(t => {
+      const it = PRI_IT[t]; const active = PRI_STATE.filterType === t;
+      return `<button class="pri-filter-btn${active?' active':''}" onclick="priSetFilter('${t}')">
+        ${t==='전체'?'전체':`${it.icon} ${t}`}
+      </button>`;
+    }).join('')}
+  </div>`;
+
+  // issue cards
+  html += filtered.map(issue => {
+    const pr = PRI_STATE.priorities[issue.id];
+    const pri = pr?.p || '미설정';
+    const pcc = PRI_PC[pri] || PRI_PC.미설정;
+    const ti = PRI_IT[issue.type] || {};
+    const isSet = pri !== '미설정';
+    const exp = PRI_STATE.expanded === issue.id;
+
+    let expandHtml = '';
+    if (exp) {
+      const pBtns = ['즉시해결','단기개선','중장기검토','보류'].map(pp => {
+        const pcc2 = PRI_PC[pp]; const active = pri === pp;
+        return `<button class="pri-btn${active?' active':''}"
+          style="${active?`border-color:${pcc2.col};color:${pcc2.col};background:${pcc2.bg}`:''}"
+          onclick="priClickPri('${issue.id}','${pp}')">${pcc2.label}</button>`;
+      }).join('');
+      expandHtml = `<div class="pri-expand">
+        <div class="pri-expand-label">상세 내용</div>
+        <div class="pri-detail-text">${issue.detail}</div>
+        <div class="pri-expand-label">우선순위</div>
+        <div class="pri-btns">${pBtns}</div>
+        <div class="pri-expand-label">메모</div>
+        <textarea class="pri-memo" id="pri-memo-${issue.id}" rows="2"
+          placeholder="담당자 의견, 실행 방법, 기한 등"
+          onblur="priSaveMemo('${issue.id}')">${pr?.memo||''}</textarea>
+      </div>`;
+    }
+
+    return `<div class="pri-card${isSet?' set':''}">
+      <div class="pri-card-header" onclick="priToggle('${issue.id}')">
+        <span class="pri-type-badge" style="background:${ti.bg||'#eee'};color:${ti.col||'#333'}">${ti.icon||''} ${issue.type}</span>
+        <div class="pri-card-body">
+          <div class="pri-problem">${issue.problem}</div>
+          ${pr?.by?`<div class="pri-updated">${pr.by} · ${pr.at}</div>`:''}
+        </div>
+        <div class="pri-card-right">
+          ${issue.count>0?`<span class="pri-count-label">${issue.count}건</span>`:''}
+          <span class="pri-status-badge" style="background:${pcc.bg};color:${pcc.col};border-color:${pcc.brd}">${pcc.short}</span>
+          <span class="expand-icon" style="font-size:9px;color:var(--text-muted);transition:transform .2s;${exp?'transform:rotate(180deg)':''}">▼</span>
+        </div>
+      </div>
+      ${expandHtml}
+    </div>`;
+  }).join('');
+
+  el.innerHTML = html;
+}
+
+function priSetFilter(t) {
+  PRI_STATE.filterType = t;
+  PRI_STATE.expanded = null;
+  priRenderIssues();
+}
+
+function priToggle(id) {
+  PRI_STATE.expanded = PRI_STATE.expanded === id ? null : id;
+  priRenderIssues();
+}
+
+function priClickPri(id, p) {
+  const memo = document.getElementById(`pri-memo-${id}`)?.value || PRI_STATE.priorities[id]?.memo || '';
+  priSetPriority(id, p, memo);
+}
+
+function priSaveMemo(id) {
+  const cur = PRI_STATE.priorities[id];
+  if (!cur?.p || cur.p === '미설정') return;
+  const memo = document.getElementById(`pri-memo-${id}`)?.value || '';
+  priSetPriority(id, cur.p, memo);
+}
+
+function priRenderDash() {
+  const el = document.getElementById('pri-dashboard');
+  if (!el) return;
+  const all = priAllFlat();
+  const totalSet = all.filter(i => PRI_STATE.priorities[i.id]?.p && PRI_STATE.priorities[i.id].p !== '미설정').length;
+  const totalPct = all.length ? Math.round(totalSet/all.length*100) : 0;
+  const pCounts = {};
+  ['즉시해결','단기개선','중장기검토','보류','미설정'].forEach(p => {
+    pCounts[p] = all.filter(i => (PRI_STATE.priorities[i.id]?.p||'미설정') === p).length;
+  });
+
+  const summaryCards = [
+    {label:'전체 이슈', val:all.length, col:'var(--text)'},
+    {label:'설정 완료', val:totalSet, col:'#6c63ff'},
+    {label:'즉시해결', val:pCounts['즉시해결'], col:'#a32d2d'},
+    {label:'단기개선', val:pCounts['단기개선'], col:'#854f0b'},
+    {label:'미설정', val:pCounts['미설정'], col:'#aaa'},
+  ].map(s => `<div class="dash-stat">
+    <div class="dash-stat-num" style="color:${s.col}">${s.val}</div>
+    <div class="dash-stat-label">${s.label}</div>
+  </div>`).join('');
+
+  const bpRows = PRI_BRANCHES.map(b => {
+    const bis = PRI_ISSUES[b]||[]; const col = PRI_BC[b]; const bp = priBranchPct(b);
+    const cnts = {};
+    ['즉시해결','단기개선','중장기검토','보류'].forEach(p => { cnts[p] = bis.filter(i => PRI_STATE.priorities[i.id]?.p === p).length; });
+    const segs = ['즉시해결','단기개선','중장기검토','보류'].map(p => {
+      const w = bis.length ? cnts[p]/bis.length*100 : 0;
+      return w>0?`<div class="dash-seg" style="width:${w}%;background:${PRI_PC[p].col};opacity:.75"></div>`:'';
+    }).join('');
+    const badges = ['즉시해결','단기개선','중장기검토','보류'].filter(p => cnts[p]>0).map(p =>
+      `<span class="pri-status-badge" style="font-size:10px;background:${PRI_PC[p].bg};color:${PRI_PC[p].col};border-color:${PRI_PC[p].brd}">${PRI_PC[p].short} ${cnts[p]}</span>`
+    ).join('');
+    return `<div class="dash-bp-row">
+      <div class="dash-bp-top">
+        <div class="dash-bp-dot" style="background:${col}"></div>
+        <span class="dash-bp-name">${b}</span>
+        <div class="dash-track">${segs}</div>
+        <span class="dash-cnt">${priBranchSet(b)}/${bis.length}개</span>
+        <span class="dash-pct-label" style="color:${col}">${bp}%</span>
+      </div>
+      <div class="dash-badges">${badges}</div>
+    </div>`;
+  }).join('');
+
+  // table filter buttons
+  const fp = PRI_STATE.filterPri;
+  const fBtns = ['전체','즉시해결','단기개선','중장기검토','보류','미설정'].map(p => {
+    const pcc = PRI_PC[p]||{col:'#6c63ff',bg:'#f0effe',brd:'#c3b9ff'};
+    const active = fp === p;
+    const cnt = p==='전체' ? totalSet : (pCounts[p]||0);
+    return `<button class="pri-filter-btn${active?' active':''}" onclick="priSetDashFilter('${p}')"
+      style="${active&&p!=='전체'?`background:${pcc.bg};color:${pcc.col};border-color:${pcc.brd}`:''}">
+      ${p==='전체'?'전체':PRI_PC[p]?.short||p} ${cnt}
+    </button>`;
+  }).join('');
+
+  const filteredIssues = fp==='전체'
+    ? all.filter(i => PRI_STATE.priorities[i.id]?.p && PRI_STATE.priorities[i.id].p !== '미설정')
+    : all.filter(i => (PRI_STATE.priorities[i.id]?.p||'미설정') === fp);
+
+  const tableRows = filteredIssues.length===0
+    ? `<div class="dash-empty">설정된 이슈가 없습니다.</div>`
+    : filteredIssues.map(issue => {
+        const pr = PRI_STATE.priorities[issue.id];
+        const p = pr?.p||'미설정'; const pcc = PRI_PC[p]||PRI_PC.미설정;
+        const col = PRI_BC[issue.branch]||'#888'; const bg2 = PRI_BG[issue.branch]||'#f5f5f5';
+        const ti = PRI_IT[issue.type]||{};
+        return `<div class="dash-table-row">
+          <div class="dash-cell"><span class="dash-br-pill" style="background:${bg2};color:${col}">${issue.branch}</span></div>
+          <div class="dash-cell" style="font-size:10px;font-weight:600;color:${ti.col||'#888'}">${ti.icon||''} ${issue.type}</div>
+          <div class="dash-cell col-main">
+            <span style="font-size:11px;font-weight:600;color:var(--text)">${issue.problem}</span>
+            ${pr?.memo?`<span style="font-size:10px;color:var(--text-muted)">${pr.memo}</span>`:''}
+            ${pr?.by?`<span style="font-size:10px;color:var(--text-muted)">${pr.by} · ${pr.at}</span>`:''}
+          </div>
+          <div class="dash-cell">
+            <span class="pri-status-badge" style="background:${pcc.bg};color:${pcc.col};border-color:${pcc.brd}">${pcc.label}</span>
+          </div>
+        </div>`;
+      }).join('');
+
+  el.innerHTML = `
+    <div class="dash-stat-grid">${summaryCards}</div>
+    <div class="dash-section">
+      <div class="dash-section-head">지점별 설정 현황</div>
+      ${bpRows}
+    </div>
+    <div class="dash-section">
+      <div class="dash-section-head">이슈별 설정 현황
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${fBtns}</div>
+      </div>
+      ${tableRows}
+    </div>`;
+}
+
+function priSetDashFilter(p) {
+  PRI_STATE.filterPri = p;
+  priRenderDash();
+}
+
+// Init
+renderOverallBar();
+renderStackedBars();
+renderBranchGrid();
+renderDetail();
+renderIssues();
+// Branch pages render on first tab click (lazy)
+renderBranchPage('seonjeongneung');
+</script>
+</body>
+</html>
