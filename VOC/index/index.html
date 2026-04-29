@@ -1631,12 +1631,19 @@ let USER_VOCS = {};  // { branchName: [{id, category, issueType, problem, detail
 
 async function vocLoad() {
   try {
-    const r = await window.storage.get('holmes_voc_user_v1', true);
-    return r ? JSON.parse(r.value) : {};
+    if (window.storage) {
+      const r = await window.storage.get('holmes_voc_user_v1', true);
+      return r ? JSON.parse(r.value) : {};
+    }
+    const r = localStorage.getItem('holmes_voc_user_v1');
+    return r ? JSON.parse(r) : {};
   } catch { return {}; }
 }
 async function vocSave(data) {
-  try { await window.storage.set('holmes_voc_user_v1', JSON.stringify(data), true); } catch {}
+  try {
+    if (window.storage) { await window.storage.set('holmes_voc_user_v1', JSON.stringify(data), true); return; }
+    localStorage.setItem('holmes_voc_user_v1', JSON.stringify(data));
+  } catch {}
 }
 
 function renderBranchVocForm(tabId) {
@@ -1916,12 +1923,19 @@ let PRI_STATE = {
 
 async function priLoad() {
   try {
-    const r = await window.storage.get('holmes_voc_pri_v1', true);
-    return r ? JSON.parse(r.value) : {};
+    if (window.storage) {
+      const r = await window.storage.get('holmes_voc_pri_v1', true);
+      return r ? JSON.parse(r.value) : {};
+    }
+    const r = localStorage.getItem('holmes_voc_pri_v1');
+    return r ? JSON.parse(r) : {};
   } catch { return {}; }
 }
 async function priSave(p) {
-  try { await window.storage.set('holmes_voc_pri_v1', JSON.stringify(p), true); } catch {}
+  try {
+    if (window.storage) { await window.storage.set('holmes_voc_pri_v1', JSON.stringify(p), true); return; }
+    localStorage.setItem('holmes_voc_pri_v1', JSON.stringify(p));
+  } catch {}
 }
 
 function priBranchSet(b) {
