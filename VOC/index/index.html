@@ -33,6 +33,7 @@
     color: var(--text);
     min-height: 100vh;
     line-height: 1.6;
+    font-size: 15px;
   }
 
   /* Header */
@@ -2157,7 +2158,7 @@ function priRenderDash() {
   </div>`).join('');
 
   const bpRows = PRI_BRANCHES.map(b => {
-    const bis = PRI_ISSUES[b]||[]; const col = PRI_BC[b]; const bp = priBranchPct(b);
+    const bis = priBranchAll(b); const col = PRI_BC[b]; const bp = priBranchPct(b);
     const cnts = {};
     ['즉시해결','단기개선','중장기검토','보류'].forEach(p => { cnts[p] = bis.filter(i => PRI_STATE.priorities[i.id]?.p === p).length; });
     const segs = ['즉시해결','단기개선','중장기검토','보류'].map(p => {
@@ -2261,7 +2262,7 @@ function renderPriorityView() {
   </div>`).join('');
 
   const bpRows = PRI_BRANCHES.map(b => {
-    const bis = PRI_ISSUES[b]||[]; const col = PRI_BC[b]; const bp = priBranchPct(b);
+    const bis = priBranchAll(b); const col = PRI_BC[b]; const bp = priBranchPct(b);
     const cnts = {};
     ['즉시해결','단기개선','중장기검토','보류'].forEach(p => { cnts[p] = bis.filter(i => PRI_STATE.priorities[i.id]?.p === p).length; });
     const segs = ['즉시해결','단기개선','중장기검토','보류'].map(p => {
