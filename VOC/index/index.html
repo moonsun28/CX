@@ -1938,15 +1938,20 @@ async function priSave(p) {
   } catch {}
 }
 
+function priBranchAll(b) {
+  const base = (PRI_ISSUES[b]||[]).map(i => ({...i, branch:b}));
+  const user = (USER_VOCS[b]||[]).map(v => ({id:v.id, type:v.issueType, problem:v.problem, detail:v.detail, count:v.count, branch:b, _userVoc:true}));
+  return [...base, ...user];
+}
 function priBranchSet(b) {
-  return (PRI_ISSUES[b]||[]).filter(i => PRI_STATE.priorities[i.id]?.p && PRI_STATE.priorities[i.id].p !== '미설정').length;
+  return priBranchAll(b).filter(i => PRI_STATE.priorities[i.id]?.p && PRI_STATE.priorities[i.id].p !== '미설정').length;
 }
 function priBranchPct(b) {
-  const t = (PRI_ISSUES[b]||[]).length;
-  return t ? Math.round(priBranchSet(b)/t*100) : 0;
+  const all = priBranchAll(b);
+  return all.length ? Math.round(priBranchSet(b)/all.length*100) : 0;
 }
 function priAllFlat() {
-  return PRI_BRANCHES.flatMap(b => (PRI_ISSUES[b]||[]).map(i => ({...i, branch:b})));
+  return PRI_BRANCHES.flatMap(b => priBranchAll(b));
 }
 
 function priSetPriority(id, p, memo) {
@@ -2201,7 +2206,7 @@ function priRenderDash() {
           <div class="dash-cell"><span class="dash-br-pill" style="background:${bg2};color:${col}">${issue.branch}</span></div>
           <div class="dash-cell" style="font-size:10px;font-weight:600;color:${ti.col||'#888'}">${ti.icon||''} ${issue.type}</div>
           <div class="dash-cell col-main">
-            <span style="font-size:11px;font-weight:600;color:var(--text)">${issue.problem}</span>
+            <span style="font-size:11px;font-weight:600;color:var(--text)">${issue.problem}${issue._userVoc?'<span style="font-size:9px;margin-left:5px;padding:1px 5px;background:#e8f5e9;color:#388e3c;border-radius:4px">신규등록</span>':''}</span>
             ${pr?.memo?`<span style="font-size:10px;color:var(--text-muted)">${pr.memo}</span>`:''}
             ${pr?.by?`<span style="font-size:10px;color:var(--text-muted)">${pr.by} · ${pr.at}</span>`:''}
           </div>
@@ -2302,7 +2307,7 @@ function renderPriorityView() {
           <div class="dash-cell"><span class="dash-br-pill" style="background:${bg2};color:${col}">${issue.branch}</span></div>
           <div class="dash-cell" style="font-size:10px;font-weight:600;color:${ti.col||'#888'}">${ti.icon||''} ${issue.type}</div>
           <div class="dash-cell col-main">
-            <span style="font-size:11px;font-weight:600;color:var(--text)">${issue.problem}</span>
+            <span style="font-size:11px;font-weight:600;color:var(--text)">${issue.problem}${issue._userVoc?'<span style="font-size:9px;margin-left:5px;padding:1px 5px;background:#e8f5e9;color:#388e3c;border-radius:4px">신규등록</span>':''}</span>
             ${pr?.memo?`<span style="font-size:10px;color:var(--text-muted)">${pr.memo}</span>`:''}
             ${pr?.by?`<span style="font-size:10px;color:var(--text-muted)">${pr.by} · ${pr.at}</span>`:''}
           </div>
